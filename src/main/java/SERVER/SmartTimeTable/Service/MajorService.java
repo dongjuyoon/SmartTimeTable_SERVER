@@ -1,7 +1,6 @@
 package SERVER.SmartTimeTable.Service;
 
 import SERVER.SmartTimeTable.Domain.Member;
-import SERVER.SmartTimeTable.Repository.MemberRepositroy;
 
 public class MajorService {
 
