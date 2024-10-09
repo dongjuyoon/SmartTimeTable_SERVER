@@ -1,15 +1,15 @@
 package SERVER.SmartTimeTable.Controller;
 
 import SERVER.SmartTimeTable.Domain.Member;
-import SERVER.SmartTimeTable.Service.MemberService;
+import SERVER.SmartTimeTable.Service.MajorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public class MemberController {
-    private final MemberService memberService;
+    private final MajorService memberService;
 
-    public  MemberController(MemberService memberservice){
+    public  MemberController(MajorService memberservice){
         this.memberService = memberservice;
     }
 

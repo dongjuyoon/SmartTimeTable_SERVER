@@ -3,11 +3,11 @@ package SERVER.SmartTimeTable.Service;
 import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Repository.MemberRepositroy;
 
-public class MemberService {
+public class MajorService {
 
     private final MemberRepositroy memberRepository;
 
-    public MemberService(MemberRepositroy memberRepository) {
+    public MajorService(MemberRepositroy memberRepository) {
         this.memberRepository = memberRepository;
     }
 
