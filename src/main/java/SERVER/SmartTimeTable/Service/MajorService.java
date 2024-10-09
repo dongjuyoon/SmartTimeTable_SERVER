@@ -14,14 +14,14 @@ public class MajorService {
     }
 
     // 회원가입
-    public Long join(Member member) {
+    public String join(Member member) {
         checkDuplicateId(member.getId()); // ID 중복 체크
         // 회원 저장
         memberRepository.save(member);
         return member.getId();
     }
 
-    private void checkDuplicateId(Long id) {
+    private void checkDuplicateId(String id) {
         Optional<Member> existingMember = memberRepository.findById(id);
         existingMember.ifPresent(m -> {
             throw new IllegalStateException("이미 존재하는 아이디입니다.");
@@ -33,7 +33,7 @@ public class MajorService {
         return memberRepository.findAll();
     }
 
-    public Optional<Member> findOne(Long memberId) { // Long으로 수정
+    public Optional<Member> findOne(String memberId) { // Long으로 수정
         return memberRepository.findById(memberId);
     }
 }

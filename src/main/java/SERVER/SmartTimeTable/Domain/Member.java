@@ -2,7 +2,7 @@ package SERVER.SmartTimeTable.Domain;
 
 public class Member {
 
-    private Long id;
+    private String id; // ID를 String으로 변경
     private String name;
     private String password; // 비밀번호를 String으로 수정
     private String major;
@@ -49,11 +49,11 @@ public class Member {
         this.name = name;
     }
 
-    public Long getId() {
+    public String getId() { // ID를 String으로 반환
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) { // ID를 String으로 설정
         this.id = id;
     }
 }

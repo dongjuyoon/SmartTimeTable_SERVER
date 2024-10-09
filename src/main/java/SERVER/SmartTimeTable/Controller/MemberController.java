@@ -18,8 +18,8 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("/join")
-    public ResponseEntity<Long> join(@RequestBody Member member) {
-        Long memberId = memberService.join(member);
+    public ResponseEntity<String> join(@RequestBody Member member) {
+        String memberId = memberService.join(member);
         return ResponseEntity.ok(memberId); // 성공적으로 ID 반환
     }
 
@@ -32,7 +32,7 @@ public class MemberController {
 
     // 특정 회원 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Member> findOne(@PathVariable Long id) {
+    public ResponseEntity<Member> findOne(@PathVariable String id) {
         return memberService.findOne(id)
                 .map(ResponseEntity::ok) // 회원이 존재하면 OK 반환
                 .orElse(ResponseEntity.notFound().build()); // 존재하지 않으면 404 반환

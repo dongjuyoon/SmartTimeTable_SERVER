@@ -5,18 +5,18 @@ import java.util.*;
 
 public class MemoryMemberRepository implements MemberRepository {
 
-    private static Map<Long, Member> store = new HashMap<>();
+    private static Map<String, Member> store = new HashMap<>(); // ID를 String으로 사용
     private static long sequence = 0L;
 
     @Override
     public Member save(Member member) {
-        member.setId(++sequence); // ID를 설정
+        member.setId(String.valueOf(++sequence)); // Long을 String으로 변환하여 ID 설정
         store.put(member.getId(), member);
         return member;
     }
 
     @Override
-    public Optional<Member> findById(Long id) {
+    public Optional<Member> findById(String id) { // ID 타입을 String으로 변경
         return Optional.ofNullable(store.get(id));
     }
 
