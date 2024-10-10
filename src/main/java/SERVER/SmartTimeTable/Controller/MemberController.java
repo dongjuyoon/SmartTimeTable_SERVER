@@ -1,40 +1,100 @@
 package SERVER.SmartTimeTable.Controller;
 
 import SERVER.SmartTimeTable.Domain.Member;
-import SERVER.SmartTimeTable.Service.MajorService;
+import SERVER.SmartTimeTable.Repository.MemberRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/members") // 기본 URL 매핑
+@RequestMapping("/api/users") // 기본 URL 매핑
 public class MemberController {
-    private final MajorService memberService;
+    private final MemberRepository memberRepository;
 
-    public MemberController(MajorService memberService) {
-        this.memberService = memberService;
+    public MemberController(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
-    // 회원가입
-    @PostMapping("/join")
-    public ResponseEntity<String> join(@RequestBody Member member) {
-        String memberId = memberService.join(member);
-        return ResponseEntity.ok(memberId); // 성공적으로 ID 반환
+    // 학과 및 학번 정보를 저장하는 API
+    @PostMapping("/sign")
+    public ResponseEntity<String> signUpWithDepartment(@RequestParam String id, @RequestParam String major, @RequestParam int studentId) {
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            member = new Member();
+            member.setId(id);
+        }
+        member.setMajor(major);
+        member.setSTUDENT_ID(studentId);
+        memberRepository.save(member); // 메모리 내에 저장
+        return ResponseEntity.status(HttpStatus.CREATED).body("학과 및 학번 정보 저장 완료");
     }
 
-    // 전체 회원 조회
+    // 아이디와 비밀번호를 저장하는 API
+    @PostMapping("/sign_IDPW")
+    public ResponseEntity<String> signUpWithIdPassword(@RequestParam String id, @RequestParam String password) {
+        try {
+            Member member = memberRepository.findById(id);
+            if (member == null) {
+                member = new Member();
+                member.setId(id);
+            }
+            member.setPassword(password);
+            memberRepository.save(member); // 메모리 내에 저장
+            return ResponseEntity.status(HttpStatus.CREATED).body("아이디 및 비밀번호 정보 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
+        }
+    }
+
+    // 전공 이수 완료 정보를 저장하는 API
+    @PostMapping("/sign_major")
+    public ResponseEntity<String> signUpWithMajorCourses(@RequestParam String id, @RequestParam String major) {
+        try {
+            Member member = memberRepository.findById(id);
+            if (member == null) {
+                member = new Member();
+                member.setId(id);
+            }
+            member.setMajor(major);
+            memberRepository.save(member); // 메모리 내에 저장
+            return ResponseEntity.status(HttpStatus.CREATED).body("전공 이수 완료 정보 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
+        }
+    }
+
+    // 교양 이수 완료 정보를 저장하는 API
+    @PostMapping("/sign_elective")
+    public ResponseEntity<String> signUpWithElectiveCourses(@RequestParam String id, @RequestParam List<String> electiveCourses) {
+        try {
+            Member member = memberRepository.findById(id);
+            if (member == null) {
+                member = new Member();
+                member.setId(id);
+            }
+            // 여기에 교양 과목 정보를 저장하는 로직 추가
+            memberRepository.save(member); // 메모리 내에 저장
+            return ResponseEntity.status(HttpStatus.CREATED).body("교양 이수 완료 정보 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
+        }
+    }
+
+    // 회원가입 완료 후 객체 반환 API
+    @GetMapping("/complete")
+    public ResponseEntity<Member> completeSignUp(@RequestParam String id) {
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(member);
+    }
+
+    // 모든 사용자 목록 조회 API
     @GetMapping
-    public ResponseEntity<List<Member>> findAll() {
-        List<Member> members = memberService.findMember();
-        return ResponseEntity.ok(members); // 전체 회원 목록 반환
-    }
-
-    // 특정 회원 조회
-    @GetMapping("/{id}")
-    public ResponseEntity<Member> findOne(@PathVariable String id) {
-        return memberService.findOne(id)
-                .map(ResponseEntity::ok) // 회원이 존재하면 OK 반환
-                .orElse(ResponseEntity.notFound().build()); // 존재하지 않으면 404 반환
+    public ResponseEntity<List<Member>> getMembers() {
+        return ResponseEntity.ok(memberRepository.findAll());
     }
 }
