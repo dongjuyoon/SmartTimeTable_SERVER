@@ -25,8 +25,8 @@ public class MemberController {
             member = new Member();
             member.setId(id);
         }
-        member.setMajor(major); // 전공 저장
-        member.setStudentId(studentId); // int 타입으로 수정
+        member.setMajors(List.of(major)); // 전공을 리스트로 저장
+        member.setStudentId(studentId); // 학번 저장
         memberRepository.save(member); // 메모리 내에 저장
         return ResponseEntity.status(HttpStatus.CREATED).body("학과 및 학번 정보 저장 완료");
     }
@@ -67,19 +67,51 @@ public class MemberController {
 
     // 교양 이수 완료 정보를 저장하는 API
     @PostMapping("/sign_elective")
-    public ResponseEntity<String> signUpWithElectiveCourses(@RequestParam String id, @RequestParam List<String> electiveCourses) {
+    public ResponseEntity<String> signUpWithElectiveCourses(@RequestParam String id, @RequestParam List<String> coreElectives, @RequestParam List<String> commonElectives) {
         try {
             Member member = memberRepository.findById(id);
             if (member == null) {
                 member = new Member();
                 member.setId(id);
             }
-            member.setElectiveCourses(electiveCourses); // 교양 과목을 리스트로 저장
+            member.setCoreElectives(coreElectives); // 핵심 교양 과목을 리스트로 저장
+            member.setCommonElectives(commonElectives); // 공통 교양 과목을 리스트로 저장
             memberRepository.save(member); // 메모리 내에 저장
             return ResponseEntity.status(HttpStatus.CREATED).body("교양 이수 완료 정보 저장 완료");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
         }
+    }
+
+    // 이메일 인증 요청 API
+    @PostMapping("/verify_email")
+    public ResponseEntity<String> verifyEmail(@RequestParam String id) {
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자가 존재하지 않음");
+        }
+
+        // 이메일 인증 로직 (예: 인증 이메일 전송)
+        // 이곳에 실제 이메일 전송 코드를 추가합니다.
+
+        return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
+    }
+
+    // 이메일 인증 확인 API
+    @PostMapping("/confirm_email")
+    public ResponseEntity<String> confirmEmail(@RequestParam String id, @RequestParam String verificationCode) {
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자가 존재하지 않음");
+        }
+
+        // 인증 코드 검증 로직 (예: 저장된 코드와 비교)
+        // 여기서 실제 인증 코드 검증 로직을 추가합니다.
+
+        member.setEmailVerified(true); // 이메일 인증 완료
+        memberRepository.save(member); // 메모리 내에 저장
+
+        return ResponseEntity.ok("이메일 인증이 완료되었습니다.");
     }
 
     // 회원가입 완료 후 객체 반환 API
