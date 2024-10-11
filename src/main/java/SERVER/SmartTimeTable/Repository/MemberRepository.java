@@ -8,4 +8,5 @@ public interface MemberRepository {
     Member findById(String id);
     void save(Member member);
     List<Member> findAll();
+
 }

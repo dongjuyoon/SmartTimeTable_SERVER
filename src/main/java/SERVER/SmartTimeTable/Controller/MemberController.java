@@ -25,8 +25,8 @@ public class MemberController {
             member = new Member();
             member.setId(id);
         }
-        member.setMajor(major);
-        member.setSTUDENT_ID(studentId);
+        member.setMajor(major); // 전공 저장
+        member.setStudentId(studentId); // int 타입으로 수정
         memberRepository.save(member); // 메모리 내에 저장
         return ResponseEntity.status(HttpStatus.CREATED).body("학과 및 학번 정보 저장 완료");
     }
@@ -50,14 +50,14 @@ public class MemberController {
 
     // 전공 이수 완료 정보를 저장하는 API
     @PostMapping("/sign_major")
-    public ResponseEntity<String> signUpWithMajorCourses(@RequestParam String id, @RequestParam String major) {
+    public ResponseEntity<String> signUpWithMajorCourses(@RequestParam String id, @RequestParam List<String> majors) {
         try {
             Member member = memberRepository.findById(id);
             if (member == null) {
                 member = new Member();
                 member.setId(id);
             }
-            member.setMajor(major);
+            member.setMajors(majors); // 전공을 리스트로 저장
             memberRepository.save(member); // 메모리 내에 저장
             return ResponseEntity.status(HttpStatus.CREATED).body("전공 이수 완료 정보 저장 완료");
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class MemberController {
                 member = new Member();
                 member.setId(id);
             }
-            // 여기에 교양 과목 정보를 저장하는 로직 추가
+            member.setElectiveCourses(electiveCourses); // 교양 과목을 리스트로 저장
             memberRepository.save(member); // 메모리 내에 저장
             return ResponseEntity.status(HttpStatus.CREATED).body("교양 이수 완료 정보 저장 완료");
         } catch (Exception e) {
