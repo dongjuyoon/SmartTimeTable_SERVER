@@ -92,4 +92,45 @@ public class MemberController {
         String userPwd = members.get(0).getPassword(); // 첫 번째 멤버의 비밀번호 반환
         return ResponseEntity.ok("비밀번호: " + userPwd);
     }
+    // 로그인하는 api
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String id, @RequestParam String password) {
+        Member loginMember = memberRepository.findById(id);
+        if (loginMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디가 맞지 않습니다.");
+        } else if (!loginMember.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 맞지 않습니다.");
+        }
+        return ResponseEntity.ok("로그인 성공"); // 성공시 성공 메시지 반환
+    }
+
+    // 학번, 이메일, 이름으로 아이디 조회 API
+    @GetMapping("find-id")
+    public ResponseEntity<String> findId(@RequestParam int studentId,
+                                         @RequestParam String email,
+                                         @RequestParam String name) {
+        List<Member> members = memberRepository.findByStudentId_Email_Name(studentId, email, name);
+
+        if (members.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+
+        String userId = members.get(0).getId(); // 첫 번째 멤버의 아이디 반환
+        return ResponseEntity.ok("아이디: " + userId);
+    }
+
+    // 아이디, 이메일, 이메일 인증 여부로 비밀번호 찾는 API
+    @GetMapping("find-password") // 메서드 이름 변경
+    public ResponseEntity<String> findPassword(@RequestParam String id,
+                                               @RequestParam String email,
+                                               @RequestParam Boolean emailVerified) {
+        List<Member> members = memberRepository.findById_Email_EmailVerified(id, email, emailVerified);
+
+        if (members.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+
+        String userPwd = members.get(0).getPassword(); // 첫 번째 멤버의 비밀번호 반환
+        return ResponseEntity.ok("비밀번호: " + userPwd);
+    }
 }
