@@ -96,7 +96,7 @@ public class MemberController {
 
         return ResponseEntity.ok("인증 이메일이 전송되었습니다.");
     }
-
+//변셩
     // 이메일 인증 확인 API
     @PostMapping("/confirm_email")
     public ResponseEntity<String> confirmEmail(@RequestParam String id, @RequestParam String verificationCode) {
