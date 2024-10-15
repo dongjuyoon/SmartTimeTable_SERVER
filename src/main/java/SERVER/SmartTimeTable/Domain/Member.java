@@ -87,6 +87,4 @@ public class Member {
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
     }
-
-
 }
