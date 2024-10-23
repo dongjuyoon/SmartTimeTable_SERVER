@@ -121,8 +121,8 @@ public class MemberController {
     @GetMapping("/find-password")
     public ResponseEntity<String> findPassword(@RequestParam String id,
                                                @RequestParam String email,
-                                               @RequestParam Boolean emailVerified) {
-        List<Member> members = memberRepository.findById_Email_EmailVerified(id, email, emailVerified);
+                                               @RequestParam int studentId) {
+        List<Member> members = memberRepository.findByPassword_Email_EmailVerified(id, email, studentId);
 
         if (members.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");

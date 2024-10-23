@@ -45,12 +45,12 @@ public class MemoryMemberRepository implements MemberRepository {
 
         return matchingMembers; // 조건에 맞는 멤버 리스트 반환
     }
-    public List<Member> findById_Email_EmailVerified(String id, String email, boolean emailVerified){
+    public List<Member> findByPassword_Email_EmailVerified(String id, String email, int studentId){
         List<Member> matchingMembers_1 = new ArrayList<>();
         for (Member member : memberMap.values()) {
             if (member.getId().equals(id) && // String 비교 시 equals 사용
                     member.getEmail().equals(email) &&
-                    member.isEmailVerified() == emailVerified) { // boolean 비교
+                    (member.getStudentId() == studentId)){ // boolean 비교
                 matchingMembers_1.add(member);
             }
         }return matchingMembers_1; // 조건에 맞는 멤버 리스트 반환
