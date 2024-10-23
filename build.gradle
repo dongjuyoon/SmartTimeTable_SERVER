@@ -32,6 +32,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test' // Spring Boot Test
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // JUnit Platform Launcher
+
 }
 
 test {
