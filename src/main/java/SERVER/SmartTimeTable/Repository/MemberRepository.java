@@ -15,7 +15,7 @@ public interface MemberRepository {
 
     List<Member> findByStudentId_Email_Name(int studentId, String email, String name);
 
-    List<Member> findById_Email_EmailVerified(String id, String email, boolean emailVerified);
+    List<Member> findByPassword_Email_EmailVerified(String id, String email, int StudentId);
 }
 
 
