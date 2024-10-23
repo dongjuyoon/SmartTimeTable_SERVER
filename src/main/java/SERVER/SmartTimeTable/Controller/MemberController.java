@@ -86,14 +86,19 @@ public class MemberController {
     // 로그인하는 API
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String id, @RequestParam String password) {
-        Member loginMember = memberRepository.findById(id);
-        if (loginMember == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디가 맞지 않습니다.");
-        } else if (!loginMember.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 맞지 않습니다.");
+        try {
+            Member loginMember = memberRepository.findById(id);
+            if (loginMember == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디가 맞지 않습니다.");
+            } else if (!loginMember.getPassword().equals(password)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 맞지 않습니다.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
         }
         return ResponseEntity.ok("로그인 성공");
     }
+
 
     // 학번, 이메일, 이름으로 아이디 조회 API
     @GetMapping("/find-id")
