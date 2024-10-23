@@ -6,12 +6,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+@SpringBootTest
+public class MemoryMemberRepositoryTest {
 
-class MemoryMemberRepositoryTest {
-
-    private MemoryMemberRepository memberRepository;
+     MemoryMemberRepository memberRepository = new MemoryMemberRepository();
 
     @BeforeEach
     void setUp() {
@@ -60,7 +61,7 @@ class MemoryMemberRepositoryTest {
         assertEquals("비밀번호가 맞지 않습니다.", response.getBody());
     }
 
-    private ResponseEntity<String> login(String id, String password) {
+    public ResponseEntity<String> login(String id, String password) {
         Member loginMember = memberRepository.findById(id);
         if (loginMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디가 맞지 않습니다.");
@@ -69,4 +70,9 @@ class MemoryMemberRepositoryTest {
         }
         return ResponseEntity.ok("로그인 성공");
     }
+    @Test
+    public void simpleTest() {
+        assertEquals(1, 1); // 간단한 테스트
+    }
+
 }
