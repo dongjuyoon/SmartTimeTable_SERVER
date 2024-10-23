@@ -10,6 +10,7 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("/api/users")
 public class MemberController {
 
     private final MemberRepository memberRepository;
