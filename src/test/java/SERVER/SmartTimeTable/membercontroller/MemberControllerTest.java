@@ -3,6 +3,7 @@ package SERVER.SmartTimeTable.membercontroller;
 import SERVER.SmartTimeTable.Controller.MemberController;
 import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Repository.MemberRepository;
+import SERVER.SmartTimeTable.Repository.MemoryMemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,26 +24,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-
+@SpringBootTest
 @WebMvcTest(MemberController.class)
-class MemberControllerTest {
+public class MemberControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private MemberRepository memberRepository;
-
-    @InjectMocks
-    private MemberController memberController;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @MockBean
+    private MemoryMemberRepository memberRepository; // MockBean으로 변경
 
     @Test
-    void signUpWithDepartment_Success() throws Exception {
+    public void signUpWithDepartment_Success() throws Exception {
         // Given
         String id = "testUser";
         String major = "Computer Science";
@@ -56,7 +51,7 @@ class MemberControllerTest {
                         .param("studentId", String.valueOf(studentId))
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("학과 및 학번 정보 저장 완료")); // 여기서 오류가 발생할 수 있음
+                .andExpect(content().string("학과 및 학번 정보 저장 완료"));
     }
 
 
@@ -103,7 +98,7 @@ class MemberControllerTest {
                         .param("password", password)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(content().string("로그인 성공")); // 여기서도 오류가 발생할 수 있음
+                .andExpect(content().string("로그인 성공"));
     }
 
     @Test
@@ -172,7 +167,6 @@ class MemberControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("null")); // null 대신 "null" 문자열을 기대
     }
-
 
     // 추가 테스트 메서드 작성...
 }

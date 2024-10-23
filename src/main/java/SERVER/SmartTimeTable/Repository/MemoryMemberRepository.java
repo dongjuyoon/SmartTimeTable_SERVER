@@ -58,8 +58,4 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 264117b7ec232c6a2b574203c7747b2792da982f
