@@ -22,15 +22,27 @@
 
 <script>
     document.getElementById('findIdForm').onsubmit = async function(event) {
-        event.preventDefault();
+        event.preventDefault(); // 기본 제출 동작 방지
         const formData = new FormData(event.target);
-        const response = await fetch('/api/users/find-id', {
-            method: 'POST',
-            body: formData
+        const params = new URLSearchParams();
+        for (const pair of formData.entries()) {
+            params.append(pair[0], pair[1]);
+        }
+
+        // Fetch 요청을 보낼 때 URL과 메서드 확인
+        const response = await fetch(`/api/users/findid?${params.toString()}`, { // find_id로 수정
+            method: 'GET' // GET 요청
         });
-        const message = await response.text();
-        alert(message);
+
+        // 응답 처리
+        if (response.ok) {
+            const message = await response.text();
+            alert(message);
+        } else {
+            alert('아이디를 찾는 데 실패했습니다.'); // 에러 처리
+        }
     };
 </script>
+
 </body>
 </html>

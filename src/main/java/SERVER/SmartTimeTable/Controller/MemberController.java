@@ -103,7 +103,7 @@ public class MemberController {
 
 
     // 학번, 이메일, 이름으로 아이디 조회 API
-    @GetMapping("/find-id")
+    @GetMapping("/findid")
     public ResponseEntity<String> findId(@RequestParam int studentId,
                                          @RequestParam String email,
                                          @RequestParam String name) {
@@ -118,11 +118,11 @@ public class MemberController {
     }
 
     // 아이디, 이메일, 이메일 인증 여부로 비밀번호 찾는 API
-    @GetMapping("/find-password")
+    @GetMapping("/find_password")
     public ResponseEntity<String> findPassword(@RequestParam String id,
                                                @RequestParam String email,
-                                               @RequestParam int studentId) {
-        List<Member> members = memberRepository.findByPassword_Email_EmailVerified(id, email, studentId);
+                                               @RequestParam int studentId){
+    List<Member> members = memberRepository.findByPassword_Email_EmailVerified(id, email, studentId);
 
         if (members.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
