@@ -24,4 +24,5 @@ public class TemplateController {
     public String findPassword() {
         return "findPassword"; // login.html 파일을 반환
     }
+
 }

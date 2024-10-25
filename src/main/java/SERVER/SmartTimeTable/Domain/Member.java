@@ -13,6 +13,16 @@ public class Member {
     private int studentId; // 학번
     private String email; // 이메일
     private boolean emailVerified; // 이메일 인증 여부
+    private List<List> currentSubject; //현재 이수중인 과목 리스트
+
+    public List<List> getCurrentSubject() {
+        return currentSubject;
+    }
+
+    public void setCurrentSubject(List<List> currentSubject) {
+        this.currentSubject = currentSubject;
+    }
+
 
     // Getter 및 Setter 메서드
 
