@@ -1,18 +1,56 @@
 package SERVER.SmartTimeTable.Controller;
 
+import SERVER.SmartTimeTable.Domain.Member;
+import SERVER.SmartTimeTable.Domain.Subject;
+import SERVER.SmartTimeTable.Repository.MemorySubjectRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 @RestController
-public class HomeController {
+@RequestMapping("/subjects")
+public class SubjectController {
+
+    private final MemorySubjectRepository subjectRepository = new MemorySubjectRepository();
+    private final Member member;
+
+    public SubjectController(Member member) {
+        this.member = member;
+    }
+
+    @GetMapping
+    public List<Subject> getAllSubjects() {
+        return subjectRepository.findAll();
+    }
+
+    @PostMapping
+    public void addSubject(@RequestBody Subject subject) {
+        subjectRepository.addSubject(subject.getName(), subject.getClassTime(), subject.getProfessor(), subject.getLectureNumber(), subject.getDayWeek());
+        member.addCurrentSubject(subject);
+    }
+
+    @PutMapping("/{name}")
+    public void updateSubject(@PathVariable String name, @RequestBody Subject updatedSubject) {
+        subjectRepository.deleteSubject(name);
+        subjectRepository.addSubject(updatedSubject.getName(), updatedSubject.getClassTime(), updatedSubject.getProfessor(), updatedSubject.getLectureNumber(), updatedSubject.getDayWeek());
+        subjectRepository.updateSubject(name, updatedSubject);
+        member.removeCurrentSubject(name); // 기존 과목 삭제
+        member.addCurrentSubject(updatedSubject); // 수정된 과목 추가
+    }
+
+    @DeleteMapping("/{name}")
+    public void deleteSubject(@PathVariable String name) {
+        subjectRepository.deleteSubject(name);
+        member.removeCurrentSubject(name); // 멤버의 과목에서도 삭제
+    }
+
+
+
 
     @GetMapping("/subjects")
     public List<SubList> getSubjects() {
@@ -69,3 +107,5 @@ public class HomeController {
         }
     }
 }
+
+

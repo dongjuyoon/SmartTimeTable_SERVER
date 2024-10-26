@@ -1,6 +1,7 @@
 package SERVER.SmartTimeTable.Controller;
 
 import SERVER.SmartTimeTable.Domain.Member;
+import SERVER.SmartTimeTable.Domain.Subject;
 import SERVER.SmartTimeTable.Repository.MemberRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -131,4 +132,15 @@ public class MemberController {
         String userPwd = members.get(0).getPassword();
         return ResponseEntity.ok("비밀번호: " + userPwd);
     }
+    // 현재 수강 과목 조회 API
+    @GetMapping("/{id}/current-subjects")
+    public ResponseEntity<List<Subject>> getCurrentSubjects(@PathVariable String id) {
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(member.getCurrentSubject());
+    }
+
+
 }

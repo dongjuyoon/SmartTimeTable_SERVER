@@ -16,8 +16,9 @@ public class MemoryMemberRepository implements MemberRepository {
     public Member findById(String id) {
         return memberMap.get(id);
     }
+
     @Override
-    public Member findByPassword(String password){
+    public Member findByPassword(String password) {
         return memberMap.get(password);
     }
 
@@ -34,7 +35,6 @@ public class MemoryMemberRepository implements MemberRepository {
     @Override
     public List<Member> findByStudentId_Email_Name(int studentId, String email, String name) {
         List<Member> matchingMembers = new ArrayList<>();
-
         for (Member member : memberMap.values()) {
             if (member.getStudentId() == studentId &&
                     member.getEmail().equals(email) &&
@@ -42,20 +42,19 @@ public class MemoryMemberRepository implements MemberRepository {
                 matchingMembers.add(member);
             }
         }
-
-        return matchingMembers; // 조건에 맞는 멤버 리스트 반환
+        return matchingMembers;
     }
-    public List<Member> findByPassword_Email_EmailVerified(String id, String email, int studentId){
-        List<Member> matchingMembers_1 = new ArrayList<>();
+
+    @Override
+    public List<Member> findByPassword_Email_EmailVerified(String id, String email, int studentId) {
+        List<Member> matchingMembers = new ArrayList<>();
         for (Member member : memberMap.values()) {
-            if (member.getId().equals(id) && // String 비교 시 equals 사용
+            if (member.getId().equals(id) &&
                     member.getEmail().equals(email) &&
-                    (member.getStudentId() == studentId)){ // boolean 비교
-                matchingMembers_1.add(member);
+                    member.getStudentId() == studentId) {
+                matchingMembers.add(member);
             }
-        }return matchingMembers_1; // 조건에 맞는 멤버 리스트 반환
-
+        }
+        return matchingMembers;
     }
-
-
 }
