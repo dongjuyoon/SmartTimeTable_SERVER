@@ -10,5 +10,6 @@ public interface MemberRepository {
     void save(Member member);
     List<Member> findAll();
     List<Member> findByStudentId_Email_Name(int studentId, String email, String name);
-    List<Member> findByPassword_Email_EmailVerified(String id, String email, int studentId);
+    List<Member> findByPassword_FindByPassword_Id_StudentID_Name_Email(String id, String email, int studentId,String name);
+
 }

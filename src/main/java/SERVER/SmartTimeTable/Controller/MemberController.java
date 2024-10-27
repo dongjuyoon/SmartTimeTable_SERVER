@@ -33,6 +33,39 @@ public class MemberController {
         memberRepository.save(member);
         return ResponseEntity.status(HttpStatus.CREATED).body("학과 및 학번 정보 저장 완료");
     }
+    //핵심교양 정보를 저장하는 api
+    @PostMapping("/sign_major")
+    public ResponseEntity<String> signUpWithCoreElectives(@RequestParam String id, @RequestParam List<String> coreElectives) {
+        try {
+            Member member = memberRepository.findById(id);
+            if (member == null) {
+                member = new Member();
+                member.setId(id);
+            }
+            member.setMajors(coreElectives); // 전공을 리스트로 저장
+            memberRepository.save(member); // 메모리 내에 저장
+            return ResponseEntity.status(HttpStatus.CREATED).body("공통교양 완료 정보 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
+        }
+    }
+
+    //공통교양 정보를 저장하는 api
+    @PostMapping("/sign_major")
+    public ResponseEntity<String> signUpWithMajorCommonElectives(@RequestParam String id, @RequestParam List<String> commonElectives) {
+        try {
+            Member member = memberRepository.findById(id);
+            if (member == null) {
+                member = new Member();
+                member.setId(id);
+            }
+            member.setMajors(commonElectives); // 전공을 리스트로 저장
+            memberRepository.save(member); // 메모리 내에 저장
+            return ResponseEntity.status(HttpStatus.CREATED).body("전공 이수 완료 정보 저장 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("에러 발생");
+        }
+    }
 
     // 아이디와 비밀번호를 저장하는 API
     @PostMapping("/sign_IDPW")
@@ -104,7 +137,7 @@ public class MemberController {
 
 
     // 학번, 이메일, 이름으로 아이디 조회 API
-    @GetMapping("/findid")
+    @GetMapping("/findId")
     public ResponseEntity<String> findId(@RequestParam int studentId,
                                          @RequestParam String email,
                                          @RequestParam String name) {
@@ -122,8 +155,9 @@ public class MemberController {
     @GetMapping("/find_password")
     public ResponseEntity<String> findPassword(@RequestParam String id,
                                                @RequestParam String email,
-                                               @RequestParam int studentId){
-    List<Member> members = memberRepository.findByPassword_Email_EmailVerified(id, email, studentId);
+                                               @RequestParam int studentId,
+                                               @RequestParam String name){
+    List<Member> members = memberRepository.findByPassword_FindByPassword_Id_StudentID_Name_Email(id, email, studentId,name);
 
         if (members.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
