@@ -12,9 +12,9 @@ public interface SubjectRepository {
 
     Subject findByname(String name);
 
-    Subject findBylectureNumber(String lectureNumber);
+    Subject findByLectureNumber(String lectureNumber);
 
-    Subject findByprofessor(String professor);
+    Subject findByProfessor(String professor);
 
     void save(Subject subject);
 

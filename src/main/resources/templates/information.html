@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공모전 정보 관리</title>
+</head>
+<body>
+<h1>공모전 정보 관리</h1>
+
+<h2>공모전 추가</h2>
+<form action="/api/information" method="POST">
+    <label for="name">공모전 이름:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="applicationPeriod">응모 기간:</label>
+    <input type="text" id="applicationPeriod" name="applicationPeriod" required><br><br>
+
+    <label for="homepageLink">홈페이지 링크:</label>
+    <input type="url" id="homepageLink" name="homepageLink" required><br><br>
+
+    <label for="photoLink">사진 링크:</label>
+    <input type="url" id="photoLink" name="photoLink" required><br><br>
+
+    <button type="submit">공모전 추가</button>
+</form>
+
+<h2>모든 공모전 정보</h2>
+<div id="information-list">
+    <!-- 공모전 정보 리스트가 표시될 부분 -->
+</div>
+</body>
+</html>

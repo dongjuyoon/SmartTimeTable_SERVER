@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class MemoryInformationRepository implements InformationRepository {
@@ -14,13 +15,15 @@ public class MemoryInformationRepository implements InformationRepository {
 
     @Override
     public void save(Information information) {
-        // ID는 정보의 이름이나 다른 고유한 필드를 사용할 수 있습니다.
+        if (information == null || information.getName() == null) {
+            throw new IllegalArgumentException("정보 또는 이름이 null일 수 없습니다.");
+        }
         informationMap.put(information.getName(), information);
     }
 
     @Override
-    public Information findByName(String name) {
-        return informationMap.get(name);
+    public Optional<Information> findByName(String name) {
+        return Optional.ofNullable(informationMap.get(name));
     }
 
     @Override
@@ -29,12 +32,18 @@ public class MemoryInformationRepository implements InformationRepository {
     }
 
     @Override
-    public void update(String id, Information updatedInformation) {
-        informationMap.put(id, updatedInformation);
+    public void update(String name, Information updatedInformation) {
+        if (name == null || updatedInformation == null) {
+            throw new IllegalArgumentException("이름 또는 업데이트할 정보가 null일 수 없습니다.");
+        }
+        informationMap.put(name, updatedInformation);
     }
 
     @Override
-    public void delete(String id) {
-        informationMap.remove(id);
+    public void delete(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("이름이 null일 수 없습니다.");
+        }
+        informationMap.remove(name);
     }
 }

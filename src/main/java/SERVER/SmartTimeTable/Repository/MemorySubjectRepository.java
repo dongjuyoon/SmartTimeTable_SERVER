@@ -18,12 +18,12 @@ public class MemorySubjectRepository implements SubjectRepository {
     }
 
     @Override
-    public Subject findBylectureNumber(String lectureNumber) {
+    public Subject findByLectureNumber(String lectureNumber) {
         return subjectMap.get(lectureNumber);
     }
 
     @Override
-    public Subject findByprofessor(String professor) {
+    public Subject findByProfessor(String professor) {
         return subjectMap.get(professor);
     }
 

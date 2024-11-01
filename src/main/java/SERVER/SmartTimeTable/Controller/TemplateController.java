@@ -25,4 +25,10 @@ public class TemplateController {
         return "findPassword"; // login.html 파일을 반환
     }
 
+
+    @GetMapping("/add")
+    public String addSubject() {
+        return "add"; // login.html 파일을 반환
+    }
+
 }

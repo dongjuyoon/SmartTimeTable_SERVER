@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학번 및 전공 입력</title>
+</head>
+<body>
+<h1>학번 및 전공 입력</h1>
+<form id="majorForm">
+    <label for="major">전공:</label>
+    <input type="text" id="major" name="major" required><br>
+
+    <label for="studentId">학번:</label>
+    <input type="number" id="studentId" name="studentId" required><br>
+
+    <button type="submit">다음</button>
+</form>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+
+    document.getElementById('majorForm').onsubmit = async function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        formData.append("id", userId); // 이전 단계에서 받은 ID 추가
+
+        // 전공 및 학번 API 호출
+        const responseMajor = await fetch('/api/users/sign', {
+            method: 'POST',
+            body: formData
+        });
+
+        const messageMajor = await responseMajor.text();
+        alert(messageMajor);
+
+        // 다음 단계로 이동
+        window.location.href = "sign_MajorCourses.html?id=" + encodeURIComponent(userId);
+    };
+</script>
+</body>
+</html>

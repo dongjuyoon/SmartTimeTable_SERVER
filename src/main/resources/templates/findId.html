@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>아이디 찾기</h1>
-<form id="findIdForm" method="POST">
+<form id="findIdForm" method="GET">
     <label for="studentId">학번:</label>
     <input type="number" id="studentId" name="studentId" required><br>
 
@@ -20,28 +20,38 @@
     <button type="submit">아이디 찾기</button>
 </form>
 
+
+
 <script>
     document.getElementById('findIdForm').onsubmit = async function(event) {
-        event.preventDefault(); // 기본 제출 동작 방지
-        const formData = new FormData(event.target);
-        const params = new URLSearchParams();
-        for (const pair of formData.entries()) {
-            params.append(pair[0], pair[1]);
-        }
+      event.preventDefault(); // 기본 폼 제출 방지
+      const formData = new FormData(event.target);
+      const params = new URLSearchParams();
+      for (const pair of formData.entries()) {
+          params.append(pair[0], pair[1]);
+      }
 
-        // Fetch 요청을 보낼 때 URL과 메서드 확인
-        const response = await fetch(`/api/users/findId?${params.toString()}`, { // find_id로 수정
-            method: 'GET' // GET 요청
-        });
+      try {
+          const response = await fetch(`/api/users/findId?${params.toString()}`, {
+              method: 'GET' // GET 메서드 사용
+          });
 
-        // 응답 처리
-        if (response.ok) {
-            const message = await response.text();
-            alert(message);
-        } else {
-            alert('아이디를 찾는 데 실패했습니다.'); // 에러 처리
-        }
-    };
+          // 응답 상태 확인
+          if (response.ok) {
+              // 성공적인 응답 처리
+              const message = await response.text();
+              alert(message);
+          } else {
+              // 실패한 요청 처리
+              alert("아이디를 찾는 데 실패했습니다: " + response.statusText);
+          }
+      } catch (error) {
+          alert('서버와의 연결에 문제가 발생했습니다.'); // 네트워크 오류 처리
+      }
+  };
+
+
+
 </script>
 
 </body>
