@@ -8,7 +8,7 @@ public class SmartTimeTableApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartTimeTableApplication.class, args);
-
+//으악
 	}
 
 }
