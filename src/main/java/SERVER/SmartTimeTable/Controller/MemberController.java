@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,8 +29,17 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body("정보 저장 완료");
     }
 
+    // 아이디 중복 체크 메소드
+    @GetMapping("/checkId")
+    public ResponseEntity<String> checkId(@RequestParam String id) {
+        if (memberRepository.findById(id) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 아이디입니다.");
+        }
+        return ResponseEntity.ok("사용 가능한 아이디입니다.");
+    }
+
     @PostMapping("/sign")
-    public ResponseEntity<String> signUpWithDepartment(@RequestParam String id, @RequestParam String major, @RequestParam int studentId) {
+    public ResponseEntity<String> signUpWithDepartment(@RequestParam String id, @RequestParam List<String> major, @RequestParam int studentId) {
         Member member = memberRepository.findById(id);
         if (member == null) {
             member = new Member();
@@ -127,9 +138,17 @@ public class MemberController {
     @GetMapping("/{id}/current-subjects")
     public ResponseEntity<List<Subject>> getCurrentSubjects(@PathVariable String id) {
         Member member = memberRepository.findById(id);
+
         if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(member.getCurrentSubject());
+
+        List<Subject> currentSubjects = member.getCurrentSubject();
+        return ResponseEntity.ok(currentSubjects); // 현재 수강 과목 반환
     }
+
+
+
+
+
 }
