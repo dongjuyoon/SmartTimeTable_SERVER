@@ -13,7 +13,7 @@ public class Member {
     private String id; // 사용자 ID
     private String name; // 사용자 이름
     private String password; // 비밀번호
-    private String major;//전공
+    private List<String> major;//전공
     private List<String> majors; // 전공 과목 리스트
     private List<String> coreElectives; // 핵심 교양 과목 리스트
     private List<String> commonElectives; // 공통 교양 과목 리스트

@@ -9,7 +9,7 @@
 <h1>과목 관리</h1>
 
 <h2>과목 추가</h2>
-<form id="subjectForm">
+<form id="subjectForm" method="post">
     <label for="name">강의명:</label>
     <input type="text" id="name" name="name" required><br><br>
 
@@ -52,35 +52,34 @@
         }
     }
 
-    ddocument.getElementById('subjectForm').onsubmit = async function(event) {
-    event.preventDefault();
+    document.getElementById('subjectForm').onsubmit = async function(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
 
-    const formData = new FormData(event.target);
-    const subject = {};
-    formData.forEach((value, key) => {
-        subject[key] = value;
-    });
+        const formData = new FormData(event.target);
+        const subject = {};
+        formData.forEach((value, key) => {
+            subject[key] = value;
+        });
 
-    const response = await fetch('/subjects/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(subject)
-    });
+        const response = await fetch('/subjects/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(subject)
+        });
 
-    if (response.ok) {
-        const message = await response.text();
-        alert(message);
-        loadSubjects(); // 과목 추가 후 목록 새로 고침
-    } else {
-        alert('과목 추가 실패: ' + response.statusText);
-    }
-};
+        if (response.ok) {
+            const message = await response.text();
+            alert(message);
+            loadSubjects(); // 과목 추가 후 목록 새로 고침
+        } else {
+            alert('과목 추가 실패: ' + response.statusText);
+        }
+    };
 
-
-
-    document.addEventListener('DOMContentLoaded', loadSubjects);
+    // 페이지 로드 시 모든 과목 정보 로드
+    loadSubjects();
 </script>
 </body>
 </html>
