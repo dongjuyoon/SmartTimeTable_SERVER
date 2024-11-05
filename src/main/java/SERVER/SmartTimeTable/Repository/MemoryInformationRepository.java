@@ -57,6 +57,7 @@ public class MemoryInformationRepository implements InformationRepository {
     }
     @PostConstruct
     public void fetchContestData() {
+        //os용
         System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
