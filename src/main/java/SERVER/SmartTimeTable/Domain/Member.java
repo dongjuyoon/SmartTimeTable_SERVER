@@ -19,7 +19,6 @@ public class Member {
     private List<String> commonElectives; // 공통 교양 과목 리스트
     private int studentId; // 학번
     private String email; // 이메일
-    private boolean emailVerified; // 이메일 인증 여부
     private List<Subject> currentSubject; // 현재 이수중인 과목 리스트
 
     public Member() {
@@ -32,6 +31,15 @@ public class Member {
     public void addCurrentSubject(Subject subject) {
         this.currentSubject.add(subject);
     }
+    public List<String> addCourse() {
+        List<String> allCourses = new ArrayList<>();
+        allCourses.addAll(majors);
+        allCourses.addAll(coreElectives);
+        allCourses.addAll(commonElectives);
+        return allCourses;
+    }
+
+
 
 
 
