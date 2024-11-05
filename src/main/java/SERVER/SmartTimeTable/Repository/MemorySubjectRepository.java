@@ -85,7 +85,6 @@ public class MemorySubjectRepository implements SubjectRepository {
                         System.out.println(subjectInfoObj.getName());
                         System.out.println(subjectInfoObj.getProfessor());
 
-
                         save(subjectInfoObj); // 과목 저장
                     }
                 }

@@ -1,8 +1,17 @@
 package SERVER.SmartTimeTable.Repository;
 
 import SERVER.SmartTimeTable.Domain.Information;
+import jakarta.annotation.PostConstruct;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,4 +55,36 @@ public class MemoryInformationRepository implements InformationRepository {
         }
         informationMap.remove(name);
     }
+    @PostConstruct
+    public void fetchContestData() {
+        System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
+        ChromeOptions options = new ChromeOptions();
+        WebDriver driver = new ChromeDriver(options);
+        driver.get("https://www.campuspick.com/contest");
+
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Contest IDs 목록
+            String[] contestIds = {"26901", "27036", "27164", "26903", "27068"};
+
+            for (String contestId : contestIds) {
+                // 요소 찾기
+                WebElement figureElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("(//a[contains(@href, '/contest/view?id=" + contestId + "')]/figure)[1]")));
+
+                // data-image 속성 값 가져오기
+                String dataImage = figureElement.getAttribute("data-image");
+                System.out.println("data-image 속성 값: " + dataImage);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // 드라이버 종료
+            driver.quit();
+        }
+    }
+
+
 }
