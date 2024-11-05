@@ -47,6 +47,7 @@ public class MemorySubjectRepository implements SubjectRepository {
     }
     @PostConstruct
     public void fetchCourseData() {
+        //os용
         System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
