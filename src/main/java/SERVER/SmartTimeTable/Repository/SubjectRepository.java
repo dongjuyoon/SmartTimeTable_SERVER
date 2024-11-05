@@ -18,6 +18,8 @@ public interface SubjectRepository {
 
     void save(Subject subject);
 
+    void fetchCourseData();
+
     List<Subject> findAll();
 
     //List<Subject> addsubject(String name,String subject,String classTime ,String dayWeek);
