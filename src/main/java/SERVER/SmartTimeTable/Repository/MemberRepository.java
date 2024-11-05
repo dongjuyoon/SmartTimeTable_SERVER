@@ -11,5 +11,5 @@ public interface MemberRepository {
     List<Member> findAll();
     List<Member> findByStudentId_Email_Name(int studentId, String email, String name);
     List<Member> findByPassword_FindByPassword_Id_StudentID_Name_Email(String id, String email, int studentId,String name);
-
+    void delete(Member member);
 }

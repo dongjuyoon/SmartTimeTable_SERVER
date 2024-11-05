@@ -59,4 +59,14 @@ public class MemoryMemberRepository implements MemberRepository {
         }
         return matchingMembers;
     }
+
+    @Override
+    public void delete(Member member) {
+        if (memberMap.containsKey(member.getId())) {
+            memberMap.remove(member.getId());
+        }
+    }
+
+
 }
+
