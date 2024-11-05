@@ -147,6 +147,23 @@ public class MemberController {
         return ResponseEntity.ok(currentSubjects); // 현재 수강 과목 반환
     }
 
+    @DeleteMapping("/{id}/delete-current-subject")
+    public ResponseEntity<List<Subject>> deleteCurrentSubject(@PathVariable String id, @RequestParam String subjectName) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // 과목 삭제 메소드 호출
+        member.removeCurrentSubject(subjectName); // 과목 삭제
+        saveMember(member); // 업데이트된 멤버 객체 저장
+
+        // 삭제 후 남아있는 현재 수강 과목 반환
+        List<Subject> currentSubjects = member.getCurrentSubject();
+        return ResponseEntity.ok(currentSubjects);
+    }
+
 
 
 
