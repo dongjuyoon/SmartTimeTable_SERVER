@@ -68,7 +68,7 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(subjectRepository.findMajors());
+        return ResponseEntity.ok(subjectRepository.getMajors());
     }
     //모든 공통교양 과목 돌려줌
     @GetMapping("/commonElectives")
@@ -80,7 +80,7 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(subjectRepository.findCommonElectives());
+        return ResponseEntity.ok(subjectRepository.getCommonElectives());
     }
     //모든 핵심 과목 돌려줌
     @GetMapping("/majors")
@@ -92,7 +92,7 @@ public class SubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(subjectRepository.findCoreElectives());
+        return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
 
 
