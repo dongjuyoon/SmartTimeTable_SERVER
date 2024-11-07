@@ -238,6 +238,22 @@ public class MemberController {
         return ResponseEntity.ok(addMyPage); // 현재 수강 과목 반환
     }
 
+    //이수과목 내역 관리 수정
+    @PostMapping("{id}/completedCourseSave")
+    public ResponseEntity<String> completedCourseSave(@PathVariable String id,@RequestParam List<String> majors,@RequestParam List<String> coreElectives,@RequestParam List<String> commonElectives) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+        member.setMajors(majors);
+        member.setCommonElectives(commonElectives);
+        member.setCoreElectives(coreElectives);
+
+        return saveMember(member);
+    }
+
+
 
 
 
