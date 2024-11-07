@@ -142,25 +142,25 @@ public class MemorySubjectRepository implements SubjectRepository {
     }
 
     @Override
-    public List<Subject> findMajors(){
+    public List<Subject> getMajors(){
         return Majors;
     }
 
     @Override
-    public List<Subject> findCoreElectives(){
+    public List<Subject> getCoreElectives(){
         return CoreElectives;
     }
 
     @Override
-    public List<Subject> findCommonElectives(){
+    public List<Subject> getCommonElectives(){
         return CommonElectives;
     }
 
-    public List<Subject> findAllElectives(){
+    public List<Subject> getAllElectives(){
         List<Subject> allElectives = new ArrayList<>();
-        allElectives.addAll(findMajors());
-        allElectives.addAll(findCoreElectives());
-        allElectives.addAll(findCommonElectives());
+        allElectives.addAll(getMajors());
+        allElectives.addAll(getCoreElectives());
+        allElectives.addAll(getCommonElectives());
 
         return allElectives;
     }

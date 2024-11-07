@@ -27,8 +27,8 @@ public interface SubjectRepository {
     void addSubject(String name, String classTime, String professor, String lectureNumber, String dayWeek);
     void updateSubject(String name, Subject updatedSubject);
     void deleteSubject(String name);
-     List<Subject> findCoreElectives();
-     List<Subject> findMajors();
-     List<Subject> findCommonElectives();
-     List<Subject> findAllElectives();
+     List<Subject> getCoreElectives();
+     List<Subject> getMajors();
+     List<Subject> getCommonElectives();
+     List<Subject> getAllElectives();
 }
