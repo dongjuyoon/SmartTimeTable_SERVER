@@ -208,6 +208,7 @@ public class MemberController {
 
         return ResponseEntity.ok(allElectives);
     }
+
     //특정강의를 멤버에 추가
     @PostMapping("/{id}/addToMember")
     public ResponseEntity<String> addSubjectToMember(@RequestBody String lectureNumber,@PathVariable String id) {
