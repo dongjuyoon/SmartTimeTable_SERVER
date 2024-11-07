@@ -33,45 +33,31 @@ public class SubjectController {
     }
 
     // 강의 추가 API
-    @PostMapping("/add")
-    public ResponseEntity<String> addSubject(@RequestBody List<Subject> subjects) {
-        for (Subject subject : subjects) {
-            if (subjectRepository.findByname(subject.getName()) != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 강의입니다.");
-            }
-            subjectRepository.save(subject);
-        }
-        return ResponseEntity.ok("강의가 추가되었습니다.");
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<String> addSubject(@RequestBody List<Subject> subjects) {
+//        for (Subject subject : subjects) {
+//            if (subjectRepository.findByname(subject.getName()) != null) {
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 강의입니다.");
+//            }
+//            subjectRepository.save(subject);
+//        }
+//        return ResponseEntity.ok("강의가 추가되었습니다.");
+//    }
 
-    // 특정 강의를 멤버의 시간표에 추가하는 API
-    @PostMapping("/addToMember")
-    public ResponseEntity<String> addSubjectToMember(@RequestBody AddSubjectRequest request) {
-        if (request.getMember() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원 정보가 제공되지 않았습니다.");
-        }
 
-        Subject subject = subjectRepository.findByname(request.getSubjectName());
-        if (subject == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("강의를 찾을 수 없습니다.");
-        }
+    //전체과목 돌려줌
+    @GetMapping("/allReturnSubjects")
+    public ResponseEntity<List<Subject>> completedCourseHistoryManagement2(@PathVariable String id) {
+        Member member = memberRepository.findById(id);
 
-        // 요청에서 멤버 ID를 가져와 해당 멤버를 메모리에서 조회
-        Member member = memberRepository.findById(request.getMember().getId());
+
         if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원이 존재하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        member.addCurrentSubject(subject); // 강의를 멤버의 시간표에 추가
-        memberRepository.save(member); // 업데이트된 멤버 객체 저장
-
-        return ResponseEntity.ok("강의가 시간표에 추가되었습니다.");
+        return ResponseEntity.ok(subjectRepository.findAll());
     }
 
-    @Getter
-    @Setter
-    public static class AddSubjectRequest {
-        private String subjectName; // 추가할 강의명
-        private Member member; // 선택한 멤버 정보
-    }
+
+
 }

@@ -18,7 +18,7 @@ public interface SubjectRepository {
 
     void save(Subject subject);
 
-    void fetchCourseData();
+//    void fetchCourseData();
 
     List<Subject> findAll();
 
@@ -27,4 +27,8 @@ public interface SubjectRepository {
     void addSubject(String name, String classTime, String professor, String lectureNumber, String dayWeek);
     void updateSubject(String name, Subject updatedSubject);
     void deleteSubject(String name);
+     List<Subject> findCoreElectives();
+     List<Subject> findMajors();
+     List<Subject> findCommonElectives();
+     List<Subject> findAllElectives();
 }

@@ -40,9 +40,6 @@ public class Member {
     }
 
 
-
-
-
     public void removeCurrentSubject(String subjectName) {
         this.currentSubject.removeIf(subject -> subject.getName().equals(subjectName));
     }

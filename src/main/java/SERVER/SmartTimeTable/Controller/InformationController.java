@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/information")
+@RequestMapping("/information")
 public class InformationController {
     private final InformationRepository informationRepository;
 

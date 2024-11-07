@@ -58,7 +58,9 @@ public class MemoryInformationRepository implements InformationRepository {
     @PostConstruct
     public void fetchContestData() {
         //os용
-        System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
+       // System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
+        //윈도우용
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\82108\\Downloads\\chromedriver-win64(130.0.6723.31)\\chromedriver-win64\\chromedriver.exe");
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.campuspick.com/contest");
@@ -66,13 +68,13 @@ public class MemoryInformationRepository implements InformationRepository {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-            // Contest IDs 목록
-            String[] contestIds = {"26901", "27036", "27164", "26903", "27068"};
+            // Contest ID가 아닌 패턴 기반으로 요소 찾기
+            String[] contestPatterns = {"view?id=", "contest"};
 
-            for (String contestId : contestIds) {
-                // 요소 찾기
+            for (String pattern : contestPatterns) {
+                // 해당 패턴을 포함하는 요소를 찾기
                 WebElement figureElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("(//a[contains(@href, '/contest/view?id=" + contestId + "')]/figure)[1]")));
+                        By.xpath("//a[contains(@href, '" + pattern + "')]/figure")));
 
                 // data-image 속성 값 가져오기
                 String dataImage = figureElement.getAttribute("data-image");

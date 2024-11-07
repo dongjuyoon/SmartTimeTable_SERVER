@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/members")
 @CrossOrigin(origins = "*") // CORS 설정
 public class MemberController {
 
@@ -31,6 +31,7 @@ public class MemberController {
 
     private ResponseEntity<String> saveMember(Member member) {
         memberRepository.save(member);
+        System.out.println("Saving member: " + member.getId() + ", " + member.getEmail() + ", " + member.getStudentId() + ", " + member.getName() + ", " + member.getPassword()+", " + member.getCommonElectives()+", " + member.getCoreElectives()+", " + member.getMajors()+", " + member.getMajor());
         return ResponseEntity.status(HttpStatus.CREATED).body("정보 저장 완료");
     }
 
@@ -73,7 +74,7 @@ public class MemberController {
         }
     }
     //전공 들었는지 확인
-    @PostMapping("/sign_MajorCourses")
+    @PostMapping("/sign_majorCourses")
     public ResponseEntity<String> signUpWithMajorCourses(@RequestParam String id, @RequestParam List<String> majors) {
         try {
             Member member = memberRepository.findById(id);
@@ -169,7 +170,7 @@ public class MemberController {
         return ResponseEntity.ok(currentSubjects);
     }
     // 회원탈퇴
-    @DeleteMapping("/{id}/WithdrawalOfMembership")
+    @DeleteMapping("/{id}/withdrawalOfMembership")
     public ResponseEntity<String> WithdrawalOfMembership(@PathVariable String id) {
         Member member = memberRepository.findById(id);
 
@@ -181,7 +182,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content 응답
     }
 
-    //수강한 과목 돌려줌
+    //수강했던 과목 돌려줌
     @GetMapping("/{id}/completedCourseHistoryManagement1")
     public ResponseEntity<List<String>> completedCourseHistoryManagement1(@PathVariable String id) {
         Member member = memberRepository.findById(id);
@@ -193,7 +194,7 @@ public class MemberController {
         return ResponseEntity.ok(member.addCourse()); // 현재 수강 과목 반환
     }
 
-    //전체과목 돌려줌
+    //공통,핵심 전공 과목 돌려줌
     @GetMapping("/{id}/completedCourseHistoryManagement2")
     public ResponseEntity<List<Subject>> completedCourseHistoryManagement2(@PathVariable String id) {
         Member member = memberRepository.findById(id);
@@ -203,9 +204,38 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(subjectRepository.findAll());
+        List<Subject> allElectives = subjectRepository.findAllElectives();
+
+        return ResponseEntity.ok(allElectives);
+    }
+    //특정강의를 멤버에 추가
+    @PostMapping("/{id}/addToMember")
+    public ResponseEntity<String> addSubjectToMember(@RequestBody String lectureNumber,@PathVariable String id) {
+        Member member = memberRepository.findById(id);
+        Subject subject = subjectRepository.findByLectureNumber(lectureNumber);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+
+        member.addCurrentSubject(subject); // 강의를 멤버의 시간표에 추가
+        memberRepository.save(member); // 업데이트된 멤버 객체 저장
+
+        return ResponseEntity.ok("강의가 시간표에 추가되었습니다.");
     }
 
+    //멤버 정보(학과 학번 이메일) myPage
+    @GetMapping("/{id}/myPage")
+    public ResponseEntity<String> myPage(@PathVariable String id) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+        String addMyPage= member.getEmail()+member.getMajor()+member.getStudentId();
+
+        return ResponseEntity.ok(addMyPage); // 현재 수강 과목 반환
+    }
 
 
 
