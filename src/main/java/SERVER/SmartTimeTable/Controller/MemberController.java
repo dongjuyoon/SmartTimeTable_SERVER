@@ -204,7 +204,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        List<Subject> allElectives = subjectRepository.findAllElectives();
+        List<Subject> allElectives = subjectRepository.getAllElectives();
 
         return ResponseEntity.ok(allElectives);
     }
