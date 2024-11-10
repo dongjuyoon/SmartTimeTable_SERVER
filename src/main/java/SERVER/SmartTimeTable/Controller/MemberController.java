@@ -217,6 +217,9 @@ public class MemberController {
         if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+        if (lectureNumber == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
 
 
         member.addCurrentSubject(subject); // 강의를 멤버의 시간표에 추가

@@ -47,51 +47,23 @@ public class SubjectController {
 
     //전체과목 돌려줌
     @GetMapping("/allReturnSubjects")
-    public ResponseEntity<List<Subject>> allReturnSubjects(@PathVariable String id) {
-        Member member = memberRepository.findById(id);
-
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
+    public ResponseEntity<List<Subject>> allReturnSubjects() {
         return ResponseEntity.ok(subjectRepository.findAll());
     }
 
     //모든 전공 과목 돌려줌
     @GetMapping("/majors")
-    public ResponseEntity<List<Subject>> majors(@PathVariable String id) {
-        Member member = memberRepository.findById(id);
-
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
+    public ResponseEntity<List<Subject>> majors() {
         return ResponseEntity.ok(subjectRepository.getMajors());
     }
     //모든 공통교양 과목 돌려줌
     @GetMapping("/commonElectives")
-    public ResponseEntity<List<Subject>> commonElectives(@PathVariable String id) {
-        Member member = memberRepository.findById(id);
-
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
+    public ResponseEntity<List<Subject>> commonElectives() {
         return ResponseEntity.ok(subjectRepository.getCommonElectives());
     }
     //모든 핵심 과목 돌려줌
-    @GetMapping("/majors")
-    public ResponseEntity<List<Subject>> coreElectives(@PathVariable String id) {
-        Member member = memberRepository.findById(id);
-
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
+    @GetMapping("/coreElectives")
+    public ResponseEntity<List<Subject>> coreElectives() {
         return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
 
