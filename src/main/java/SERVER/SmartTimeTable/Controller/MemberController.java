@@ -139,8 +139,8 @@ public class MemberController {
         if (members.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
         }
-        String userpassword = members.get(0).getPassword();
-        return ResponseEntity.ok("비밀번호:"+userpassword);
+        String userPassword = members.get(0).getPassword();
+        return ResponseEntity.ok("비밀번호:"+userPassword);
     }
     //현재 수강중인 과목
     @GetMapping("/{id}/current-subjects")
@@ -263,52 +263,114 @@ public class MemberController {
 
         return saveMember(member);
     }
-//    @PostMapping("{id}/recommendedCommonSubjects")
-//    public ResponseEntity<List<String>> recommendedCommonSubjects(@PathVariable String id) {
-//        Member member = memberRepository.findById(id);
-//
-//        if (member == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//
-//        List<String> enrolledCommonElectives = member.getCommonElectives();
-//
-//        // 추천 과목 목록
-//        List<String> allRecommendedSubjects1 = List.of("성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화");
-//        List<String> allRecommendedSubjects2 = List.of("글쓰기","발표와토의");
-//        List<String> allRecommendedSubjects3 = List.of("기초영어","영어1", "영어2");
-//        List<String> allRecommendedSubjects4 = List.of("영어3", "영어4");
-//        List<String> allRecommendedSubjects5 = List.of("영어회화1", "영어회화2");
-//
-//        // 수강했던 추천 과목 확인
-//        long enrolledRecommendedCount = enrolledCommonElectives.stream()
-//                .filter(allRecommendedSubjects::contains)
-//                .count();
-//
-//        // 수강했던 추천 과목이 2개 이상인 경우: 빈 리스트 반환
-//        if (enrolledRecommendedCount >= 2) {
-//            return ResponseEntity.ok(new ArrayList<>()); // 빈 리스트 반환
-//        }
-//
-//        // 수강했던 추천 과목이 있는 경우 나머지 과목 추천
-//        if (enrolledRecommendedCount == 1) {
-//            List<String> remainingSubjects = new ArrayList<>(allRecommendedSubjects);
-//            remainingSubjects.removeAll(enrolledCommonElectives); // 수강했던 과목 제거
-//            return ResponseEntity.ok(remainingSubjects); // 나머지 과목 반환
-//        }
-//
-//        // 수강했던 추천 과목이 없는 경우, 모든 추천 과목을 반환
-//        return ResponseEntity.ok(allRecommendedSubjects);
-//    }
-@PostMapping("{id}/recommendedCoreSubjects")
-public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String id) {
+    @PostMapping("{id}/recommendedCommonSubjects")
+    public ResponseEntity<List<String>> recommendedCommonSubjects(@PathVariable String id) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<String> enrolledCommonElectives = member.getCommonElectives();
+
+        // 추천 과목군들
+        List<List<String>> allRecommendedSubjects = List.of(
+                List.of("성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화"),
+                List.of("글쓰기", "발표와토의"),
+                List.of("기초영어", "영어1", "영어2","영어3", "영어4"),
+                List.of("영어회화1", "영어회화2","영어회화3", "영어회화4"),
+                List.of("4차산업혁명과 미래사회 진로선택", "디지털리터리시의 이해")
+        );
+
+        List<String> recommendedSubjects = new ArrayList<>();
+
+        // 1. "성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화" 리스트 처리
+        List<String> subjectGroup1 = allRecommendedSubjects.get(0);
+        long subjectGroup1Count = enrolledCommonElectives.stream()
+                .filter(subjectGroup1::contains)
+                .count();
+
+        if (subjectGroup1Count == 0) {
+            recommendedSubjects.addAll(subjectGroup1); // 아무것도 듣지 않았다면 모두 추천
+        } else if (subjectGroup1Count == 1) {
+            // 1개만 들었으면 그 과목 제외하고 나머지 과목들 추천
+            recommendedSubjects.addAll(subjectGroup1.stream()
+                    .filter(subject -> !enrolledCommonElectives.contains(subject))
+                    .collect(Collectors.toList()));
+        }
+
+        // 2. "글쓰기", "발표와토의" 리스트 처리
+        List<String> subjectGroup2 = allRecommendedSubjects.get(1);
+        if (enrolledCommonElectives.stream().anyMatch(subjectGroup2::contains)) {
+            // 하나라도 들었다면 이 리스트는 추천하지 않음
+        } else {
+            // 둘 다 안 들었으면 추천
+            recommendedSubjects.addAll(subjectGroup2);
+        }
+
+
+        boolean hasBasicEnglish = enrolledCommonElectives.contains("기초영어");
+        boolean hasEnglish1 = enrolledCommonElectives.contains("영어1");
+        boolean hasEnglish2 = enrolledCommonElectives.contains("영어2");
+        boolean hasEnglish3 = enrolledCommonElectives.contains("영어3");
+        boolean hasEnglish4 = enrolledCommonElectives.contains("영어4");
+
+        if (hasBasicEnglish) {
+            recommendedSubjects.add("영어1"); // "기초영어"를 들었으면 "영어1" 추천
+        } else if (hasEnglish1) {
+            recommendedSubjects.add("영어2"); // "영어1"을 들었으면 "영어2" 추천
+        } else if (hasEnglish2) {
+            // "영어2"를 수강한 경우 아무것도 추천하지 않음
+        } else if (hasEnglish3) {
+            recommendedSubjects.add("영어4"); // "영어3"을 들었으면 "영어4" 추천
+        } else if (hasEnglish4) {
+            // "영어4"를 수강한 경우 아무것도 추천하지 않음
+        }
+
+
+
+        boolean hasEnglishTalk1 = enrolledCommonElectives.contains("영어회화1");
+        boolean hasEnglishTalk2 = enrolledCommonElectives.contains("영어회화2");
+        boolean hasEnglishTalk3 = enrolledCommonElectives.contains("영어회화3");
+        boolean hasEnglishTalk4 = enrolledCommonElectives.contains("영어회화4");
+
+        if (hasEnglishTalk1) {
+            recommendedSubjects.add("영어회화2"); // "기초영어"를 들었으면 "영어1" 추천
+        } else if (hasEnglishTalk2) {
+
+        }
+        else if (hasEnglishTalk3) {
+            recommendedSubjects.add("영어회화4"); // "영어1"을 들었으면 "영어2" 추천
+        } else if (hasEnglishTalk4) {
+
+        }
+        // 7. "4차산업혁명과 미래사회 진로선택", "디지털리터리시의 이해" 리스트 처리
+        List<String> subjectGroup7 = allRecommendedSubjects.get(4);
+        if (enrolledCommonElectives.stream().anyMatch(subjectGroup7::contains)) {
+            // 하나라도 들었으면 추천하지 않음
+        } else {
+            recommendedSubjects.addAll(subjectGroup7);
+        }
+
+        // 추천 과목이 없으면 NO_CONTENT 상태로 응답
+        if (recommendedSubjects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        // 추천 과목 반환
+        return ResponseEntity.ok(recommendedSubjects);
+    }
+
+
+    @PostMapping("{id}/recommendedCoreSubjects")
+    public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String id) {
     Member member = memberRepository.findById(id);
 
     if (member == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    List<String> enrolledCommonElectives = member.getCommonElectives();
+    List<String> enrolledCoreElectives = member.getCoreElectives();
 
     // 추천 과목 목록
     List<List<String>> allRecommendedSubjects = List.of(
@@ -323,7 +385,7 @@ public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String
 
     // 수강했던 과목이 포함된 추천 과목 리스트를 제외
     for (List<String> subjectList : allRecommendedSubjects) {
-        if (enrolledCommonElectives.stream().noneMatch(subjectList::contains)) {
+        if (enrolledCoreElectives.stream().noneMatch(subjectList::contains)) {
             recommendedSubjects.addAll(subjectList);
         }
     }
