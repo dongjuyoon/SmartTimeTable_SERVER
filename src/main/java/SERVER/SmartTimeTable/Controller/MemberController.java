@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/members")
@@ -261,9 +263,84 @@ public class MemberController {
 
         return saveMember(member);
     }
+//    @PostMapping("{id}/recommendedCommonSubjects")
+//    public ResponseEntity<List<String>> recommendedCommonSubjects(@PathVariable String id) {
+//        Member member = memberRepository.findById(id);
+//
+//        if (member == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//
+//        List<String> enrolledCommonElectives = member.getCommonElectives();
+//
+//        // 추천 과목 목록
+//        List<String> allRecommendedSubjects1 = List.of("성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화");
+//        List<String> allRecommendedSubjects2 = List.of("글쓰기","발표와토의");
+//        List<String> allRecommendedSubjects3 = List.of("기초영어","영어1", "영어2");
+//        List<String> allRecommendedSubjects4 = List.of("영어3", "영어4");
+//        List<String> allRecommendedSubjects5 = List.of("영어회화1", "영어회화2");
+//
+//        // 수강했던 추천 과목 확인
+//        long enrolledRecommendedCount = enrolledCommonElectives.stream()
+//                .filter(allRecommendedSubjects::contains)
+//                .count();
+//
+//        // 수강했던 추천 과목이 2개 이상인 경우: 빈 리스트 반환
+//        if (enrolledRecommendedCount >= 2) {
+//            return ResponseEntity.ok(new ArrayList<>()); // 빈 리스트 반환
+//        }
+//
+//        // 수강했던 추천 과목이 있는 경우 나머지 과목 추천
+//        if (enrolledRecommendedCount == 1) {
+//            List<String> remainingSubjects = new ArrayList<>(allRecommendedSubjects);
+//            remainingSubjects.removeAll(enrolledCommonElectives); // 수강했던 과목 제거
+//            return ResponseEntity.ok(remainingSubjects); // 나머지 과목 반환
+//        }
+//
+//        // 수강했던 추천 과목이 없는 경우, 모든 추천 과목을 반환
+//        return ResponseEntity.ok(allRecommendedSubjects);
+//    }
+@PostMapping("{id}/recommendedCoreSubjects")
+public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String id) {
+    Member member = memberRepository.findById(id);
 
+    if (member == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
 
+    List<String> enrolledCommonElectives = member.getCommonElectives();
+
+    // 추천 과목 목록
+    List<List<String>> allRecommendedSubjects = List.of(
+            List.of("철학과 인간", "한국근현대사의 이해", "역사와 문명", "4차산업혁명을위한비판적사고", "디지털 콘텐츠로 만나는 한국의 문화유산"),
+            List.of("세계화와 사회변화", "민주주의와 현대사회", "창업입문", "여성·소수자·공동체", "현대사회와 심리학", "직무수행과 전략적 의사소통"),
+            List.of("글로벌문화", "고전으로읽는 인문학", "예술과창조성", "4차산업혁명시대의예술", "문화리터러시와창의적스토리텔링", "디지털문화의이해"),
+            List.of("환경과 인간", "우주,생명,마음", "SW프로그래밍입문", "인공지능의 세계", "4차산업혁명의 이해", "파이썬을활용한데이터분석과인공지능")
+    );
+
+    // 추천 과목 리스트 초기화
+    List<String> recommendedSubjects = new ArrayList<>();
+
+    // 수강했던 과목이 포함된 추천 과목 리스트를 제외
+    for (List<String> subjectList : allRecommendedSubjects) {
+        if (enrolledCommonElectives.stream().noneMatch(subjectList::contains)) {
+            recommendedSubjects.addAll(subjectList);
+        }
+    }
+
+    // 추천 과목이 없으면 NO_CONTENT 상태 반환
+    if (recommendedSubjects.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    // 추천 과목 반환
+    return ResponseEntity.ok(recommendedSubjects);
+}
 
 
 
 }
+
+
+
+
