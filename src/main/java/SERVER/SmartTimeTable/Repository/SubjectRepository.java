@@ -31,4 +31,5 @@ public interface SubjectRepository {
      List<Subject> getMajors();
      List<Subject> getCommonElectives();
      List<Subject> getAllElectives();
+
 }

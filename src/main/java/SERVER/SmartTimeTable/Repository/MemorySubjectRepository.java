@@ -181,4 +181,5 @@ public class MemorySubjectRepository implements SubjectRepository {
 
         return allElectives;
     }
+
 }

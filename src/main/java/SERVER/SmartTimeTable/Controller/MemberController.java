@@ -162,7 +162,7 @@ public class MemberController {
         }
 
         // 과목 삭제 메소드 호출
-        member.removeCurrentSubject(subjectName); // 과목 삭제
+        memberRepository.removeCurrentSubject(member,subjectName); // 과목 삭제
         saveMember(member); // 업데이트된 멤버 객체 저장
 
         // 삭제 후 남아있는 현재 수강 과목 반환
@@ -191,7 +191,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(member.addCourse()); // 현재 수강 과목 반환
+        return ResponseEntity.ok(memberRepository.addCourse(member)); // 현재 수강 과목 반환
     }
 
     //공통,핵심 전공 과목 돌려줌
@@ -213,17 +213,23 @@ public class MemberController {
     @PostMapping("/{id}/addToMember")
     public ResponseEntity<String> addSubjectToMember(@RequestBody String lectureNumber,@PathVariable String id) {
         Member member = memberRepository.findById(id);
-        Subject subject = subjectRepository.findByLectureNumber(lectureNumber);
         if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
         }
-        if (lectureNumber == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        if (lectureNumber == null || lectureNumber.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("강의 번호가 제공되지 않았습니다.");
+        }
+
+        Subject subject = subjectRepository.findByLectureNumber(lectureNumber);
+        if (subject == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("강의를 찾을 수 없습니다.");
         }
 
 
-        member.addCurrentSubject(subject); // 강의를 멤버의 시간표에 추가
+        memberRepository.addCurrentSubject(member,subject); // 강의를 멤버의 시간표에 추가
         memberRepository.save(member); // 업데이트된 멤버 객체 저장
+        System.out.println(getCurrentSubjects(id));
 
         return ResponseEntity.ok("강의가 시간표에 추가되었습니다.");
     }

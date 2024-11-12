@@ -5,6 +5,7 @@ import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Domain.Subject;
 import SERVER.SmartTimeTable.Repository.MemoryMemberRepository;
 import SERVER.SmartTimeTable.Repository.MemorySubjectRepository;
+import SERVER.SmartTimeTable.Repository.SubjectRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,9 @@ import java.util.List;
 public class SubjectController {
 
     private final MemorySubjectRepository subjectRepository;
-    private final MemoryMemberRepository memberRepository; // 인스턴스 변수 추가
 
     public SubjectController(MemorySubjectRepository subjectRepository, MemoryMemberRepository memberRepository) {
         this.subjectRepository = subjectRepository;
-        this.memberRepository = memberRepository; // 초기화
     }
 
     // 모든 강의 목록을 반환하는 API
@@ -32,17 +31,6 @@ public class SubjectController {
         return subjectRepository.findAll();
     }
 
-    // 강의 추가 API
-//    @PostMapping("/add")
-//    public ResponseEntity<String> addSubject(@RequestBody List<Subject> subjects) {
-//        for (Subject subject : subjects) {
-//            if (subjectRepository.findByname(subject.getName()) != null) {
-//                return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 존재하는 강의입니다.");
-//            }
-//            subjectRepository.save(subject);
-//        }
-//        return ResponseEntity.ok("강의가 추가되었습니다.");
-//    }
 
 
     //전체과목 돌려줌
@@ -66,8 +54,5 @@ public class SubjectController {
     public ResponseEntity<List<Subject>> coreElectives() {
         return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
-
-
-
 
 }

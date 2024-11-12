@@ -1,6 +1,7 @@
 package SERVER.SmartTimeTable.Repository;
 
 import SERVER.SmartTimeTable.Domain.Member;
+import SERVER.SmartTimeTable.Domain.Subject;
 
 import java.util.List;
 
@@ -12,4 +13,10 @@ public interface MemberRepository {
     List<Member> findByStudentId_Email_Name(int studentId, String email, String name);
     List<Member> findByPassword_FindByPassword_Id_StudentID_Name_Email(String id, String email, int studentId,String name);
     void delete(Member member);
+
+    void addCurrentSubject(Member member,Subject subject);
+
+    List<String> addCourse(Member member);
+
+    void removeCurrentSubject(Member member,String subjectName);
 }
