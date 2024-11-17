@@ -10,4 +10,6 @@ public interface InformationRepository {
     List<Information> findAll(); // 모든 공모전 정보 조회
     void update(String name, Information updatedInformation); // 공모전 정보 수정
     void delete(String name); // 공모전 정보 삭제
+
+    List<String> getDataImages();
 }

@@ -18,13 +18,20 @@ public interface SubjectRepository {
 
     void save(Subject subject);
 
+/*
     void fetchCourseData();
+*/
 
     List<Subject> findAll();
 
-    //List<Subject> addsubject(String name,String subject,String classTime ,String dayWeek);
 
-    void addSubject(String name, String classTime, String professor, String lectureNumber, String dayWeek);
+    /*
+        void addSubject(String name, String classTime, String professor, String lectureNumber, String dayWeek);
+    */
     void updateSubject(String name, Subject updatedSubject);
     void deleteSubject(String name);
+    List<Subject> getCoreElectives();
+    List<Subject> getMajors();
+    List<Subject> getCommonElectives();
+    List<Subject> getAllElectives();
 }

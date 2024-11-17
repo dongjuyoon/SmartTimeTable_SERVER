@@ -24,7 +24,9 @@ import java.util.Map;
 @Repository
 public class MemorySubjectRepository implements SubjectRepository {
     private final Map<String, Subject> subjectMap = new HashMap<>();
-
+    private final Map<String, Subject> majorsMap = new HashMap<>();
+    private final Map<String, Subject> coreElectivesMap = new HashMap<>();
+    private final Map<String, Subject> commonElectivesMap = new HashMap<>();
 
     @Override
     public Subject findByname(String name) {
@@ -45,10 +47,16 @@ public class MemorySubjectRepository implements SubjectRepository {
     public void save(Subject subject) {
         subjectMap.put(subject.getLectureNumber(), subject); // 강좌번호를 키로 사용
     }
+
     @PostConstruct
     public void fetchCourseData() {
         //os용
         System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
+        //window용
+/*
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\82108\\Downloads\\chromedriver-win64(130.0.6723.31)\\chromedriver-win64\\chromedriver.exe");
+*/
+
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://lms.mju.ac.kr/ilos/st/main/course_ing_list_form.acl");
@@ -66,7 +74,6 @@ public class MemorySubjectRepository implements SubjectRepository {
                     System.out.println("더 이상 로드할 데이터가 없습니다. 크롤링을 종료합니다.");
                     break; // 반복문 종료
                 }
-
                 for (WebElement element : elements) {
                     List<WebElement> columns = element.findElements(By.tagName("td"));
                     if (!columns.isEmpty()) {
@@ -80,13 +87,21 @@ public class MemorySubjectRepository implements SubjectRepository {
                         subjectInfoObj.setName(subjectName); // 강의명
                         subjectInfoObj.setProfessor(professorName); // 교수명
                         subjectInfoObj.setClassTime(columns.get(3).getText()); // 요일 및 강의 시간
-                        subjectInfoObj.setRecommendation(false); // 기본값: 추천 안함
+
 
                         System.out.println(subjectInfoObj.getLectureNumber());
                         System.out.println(subjectInfoObj.getName());
                         System.out.println(subjectInfoObj.getProfessor());
 
-                        save(subjectInfoObj); // 과목 저장
+                        if (subjectInfoObj.getName().contains("JEJ")) {
+                            majorsMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
+                            System.out.println("전공에 추가");
+                        } else if (subjectInfoObj.getName().contains("철학과 인간") || subjectInfoObj.getName().contains("한국근현대사의 이해") || subjectInfoObj.getName().contains("역사와 문명") || subjectInfoObj.getName().contains("4차산업혁명을위한비판적사고") || subjectInfoObj.getName().contains("디지털콘텐츠로 만나는 한국의 문화유산") || subjectInfoObj.getName().contains("세계화와 사회변화") || subjectInfoObj.getName().contains("민주주의와 현대사회") || subjectInfoObj.getName().contains("창업입문") || subjectInfoObj.getName().contains("여성·소수자·공동체") || subjectInfoObj.getName().contains("현대사회와 심리학") || subjectInfoObj.getName().contains("직무수행과 전략적 의사소통") || subjectInfoObj.getName().contains("글로벌문화") || subjectInfoObj.getName().contains("고전으로읽는 인문학") || subjectInfoObj.getName().contains("예술과창조성") || subjectInfoObj.getName().contains("4차산업혁명시대의예술") || subjectInfoObj.getName().contains("문화리터러시와창의적스토리텔링") || subjectInfoObj.getName().contains("디지털문화의 이해") || subjectInfoObj.getName().contains("환경과 인간") || subjectInfoObj.getName().contains("우주,생명,마음") || subjectInfoObj.getName().contains("SW프로그래밍입문") || subjectInfoObj.getName().contains("인공지능의 세계") || subjectInfoObj.getName().contains("4차산업혁명의 이해") || subjectInfoObj.getName().contains("파이썬을활용한데이터분석과인공지능") || subjectInfoObj.getName().contains("외국인학생을위한컴퓨터활용")) {
+                            coreElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
+                            System.out.println("핵심에 추가");
+
+                            save(subjectInfoObj); // 과목 저장
+                        }
                     }
                 }
 
@@ -108,9 +123,9 @@ public class MemorySubjectRepository implements SubjectRepository {
                 } catch (Exception e) {
                     System.err.println("데이터 크롤링 중 오류 발생: " + e.getMessage());
                     driver.quit(); // 드라이버 종료
-/*
+
                     e.printStackTrace(); // 스택 트레이스를 출력하여 문제를 진단
-*/
+
                 }
             }
         } finally {
@@ -118,9 +133,9 @@ public class MemorySubjectRepository implements SubjectRepository {
         }
     }
 
-//    public void addSubject(Subject subject) {
-//        subjectMap.put(subject.getName(), subject);
-//    }
+    public void addSubject(Subject subject) {
+        subjectMap.put(subject.getName(), subject);
+    }
 
     @Override
     public void updateSubject(String name, Subject updatedSubject) {
@@ -138,7 +153,26 @@ public class MemorySubjectRepository implements SubjectRepository {
     }
 
     @Override
-    public void addSubject(String name, String classTime, String professor, String lectureNumber, String dayWeek) {
+    public List<Subject> getMajors(){
+        return new ArrayList<>(majorsMap.values());
+    }
 
+    @Override
+    public List<Subject> getCoreElectives(){
+        return new ArrayList<>(coreElectivesMap.values());
+    }
+
+    @Override
+    public List<Subject> getCommonElectives(){
+        return new ArrayList<>(commonElectivesMap.values());
+    }
+
+    public List<Subject> getAllElectives(){
+        List<Subject> allElectives = new ArrayList<>();
+        allElectives.addAll(getMajors());
+        allElectives.addAll(getCoreElectives());
+        allElectives.addAll(getCommonElectives());
+
+        return allElectives;
     }
 }

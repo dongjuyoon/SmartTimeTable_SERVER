@@ -34,7 +34,7 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public List<Member> findByStudentId_Email_Name(int studentId, String email, String name) {
+    public List<Member> findByStudentId_Email_Name(String studentId, String email, String name) {
         List<Member> matchingMembers = new ArrayList<>();
         for (Member member : memberMap.values()) {
             if (member.getStudentId() == studentId &&
@@ -47,7 +47,7 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
-    public List<Member> findByPassword_FindByPassword_Id_StudentID_Name_Email(String id, String email, int studentId, String name) {
+    public List<Member> findByPassword_FindByPassword_Id_StudentID_Name_Email(String id, String email, String studentId, String name) {
         List<Member> matchingMembers = new ArrayList<>();
         for (Member member : memberMap.values()) {
             if (member.getId().equals(id) &&

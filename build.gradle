@@ -14,7 +14,7 @@ java {
 }
 
 tasks.withType(JavaCompile) {
-	options.compilerArgs << '-parameters'
+	options.compilerArgs += ['-parameters']
 }
 
 repositories {
@@ -22,9 +22,13 @@ repositories {
 }
 
 dependencies {
+
+
 	implementation 'org.projectlombok:lombok:1.18.20'
 	annotationProcessor 'org.projectlombok:lombok:1.18.20'
-
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.0'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0'
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -35,6 +39,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 test {
