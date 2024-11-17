@@ -55,5 +55,9 @@ public class SubjectController {
         return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
 
+    @GetMapping("allSubjectsClassified")
+    public ResponseEntity<List<Subject>> allSubjectsClassified() {
+        return ResponseEntity.ok(subjectRepository.findAllSubjectsClassified());
+    }
 
 }

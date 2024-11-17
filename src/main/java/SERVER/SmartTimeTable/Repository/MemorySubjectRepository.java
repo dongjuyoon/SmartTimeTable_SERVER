@@ -106,6 +106,91 @@ public class MemorySubjectRepository implements SubjectRepository {
     private final Map<String, Subject> backendSoftwareDevelopmentMap = new HashMap<>();
 
 
+    public List<Subject> findAllSubjectsClassified() {
+        List<Subject> allSubjects = new ArrayList<>();
+
+        allSubjects.addAll(philosophyHumanityMap.values());
+        allSubjects.addAll(understandingModernContemporaryKoreanHistoryMap.values());
+        allSubjects.addAll(historyCivilizationMap.values());
+        allSubjects.addAll(criticalThinkingFor4thIndustrialRevolutionMap.values());
+        allSubjects.addAll(koreanCulturalHeritageThroughDigitalContentMap.values());
+        allSubjects.addAll(globalizationAndSocialChangeMap.values());
+        allSubjects.addAll(democracyAndModernSocietyMap.values());
+        allSubjects.addAll(introductionToEntrepreneurshipMap.values());
+        allSubjects.addAll(womenMinoritiesAndCommunityMap.values());
+        allSubjects.addAll(modernSocietyAndPsychologyMap.values());
+        allSubjects.addAll(jobPerformanceAndStrategicCommunicationMap.values());
+        allSubjects.addAll(globalCultureMap.values());
+        allSubjects.addAll(humanitiesThroughClassicsMap.values());
+        allSubjects.addAll(artAndCreativityMap.values());
+        allSubjects.addAll(artInThe4thIndustrialRevolutionEraMap.values());
+        allSubjects.addAll(culturalLiteracyAndCreativeStorytellingMap.values());
+        allSubjects.addAll(understandingDigitalCultureMap.values());
+        allSubjects.addAll(universeLifeAndMindMap.values());
+        allSubjects.addAll(environmentAndHumanityMap.values());
+        allSubjects.addAll(introductionToSWProgrammingMap.values());
+        allSubjects.addAll(worldOfArtificialIntelligenceMap.values());
+        allSubjects.addAll(understandingThe4thIndustrialRevolutionMap.values());
+        allSubjects.addAll(dataAnalysisAndAIUsingPythonMap.values());
+
+        // 공통 과목
+        allSubjects.addAll(bibleAndHumanUnderstandingMap.values());
+        allSubjects.addAll(modernSocietyAndChristianEthicsMap.values());
+        allSubjects.addAll(religionAndScienceMap.values());
+        allSubjects.addAll(christianityAndCultureMap.values());
+        allSubjects.addAll(writingMap.values());
+        allSubjects.addAll(presentationAndDebateMap.values());
+        allSubjects.addAll(english1Map.values());
+        allSubjects.addAll(english2Map.values());
+        allSubjects.addAll(english3Map.values());
+        allSubjects.addAll(english4Map.values());
+        allSubjects.addAll(englishConversation1Map.values());
+        allSubjects.addAll(englishConversation2Map.values());
+        allSubjects.addAll(englishConversation3Map.values());
+        allSubjects.addAll(englishConversation4Map.values());
+        allSubjects.addAll(IndustrialRevolutionAndFutureSocietyCareerChoice4thMap.values());
+        allSubjects.addAll(understandingDigitalLiteracyNewCourseMap.values());
+
+        // 전공 과목
+        allSubjects.addAll(CProgrammingMap.values());
+        allSubjects.addAll(introductionToEngineeringDesignMap.values());
+        allSubjects.addAll(objectOrientedProgramming1Map.values());
+        allSubjects.addAll(objectOrientedProgramming2Map.values());
+        allSubjects.addAll(dataStructuresMap.values());
+        allSubjects.addAll(computerHardwareMap.values());
+        allSubjects.addAll(webProgrammingMap.values());
+        allSubjects.addAll(advancedObjectOrientedProgrammingMap.values());
+        allSubjects.addAll(teamProject1Map.values());
+        allSubjects.addAll(openSWPracticeMap.values());
+        allSubjects.addAll(computerNetworksMap.values());
+        allSubjects.addAll(databasesMap.values());
+        allSubjects.addAll(operatingSystemsMap.values());
+        allSubjects.addAll(softwareEngineeringMap.values());
+        allSubjects.addAll(computerArchitectureMap.values());
+        allSubjects.addAll(teamProject2Map.values());
+        allSubjects.addAll(systemsAnalysisAndDesignMap.values());
+        allSubjects.addAll(algorithmsMap.values());
+        allSubjects.addAll(embeddedSystemsMap.values());
+        allSubjects.addAll(databaseDesignMap.values());
+        allSubjects.addAll(programmingLanguagesMap.values());
+        allSubjects.addAll(computerSecurityMap.values());
+        allSubjects.addAll(capstoneDesignMap.values());
+        allSubjects.addAll(computerGraphicsMap.values());
+        allSubjects.addAll(computerEngineeringSpecialTopics1Map.values());
+        allSubjects.addAll(systemCloudSecurityMap.values());
+        allSubjects.addAll(blockchainMap.values());
+        allSubjects.addAll(IndustrialRevolutionAndEntrepreneurship4thMap.values());
+        allSubjects.addAll(machineLearningMap.values());
+        allSubjects.addAll(computerEngineeringSpecialTopics2Map.values());
+        allSubjects.addAll(networkComputingMap.values());
+        allSubjects.addAll(artificialIntelligenceMap.values());
+        allSubjects.addAll(mobileProgrammingMap.values());
+        allSubjects.addAll(cloudComputingMap.values());
+        allSubjects.addAll(backendSoftwareDevelopmentMap.values());
+
+        return allSubjects;
+    }
+
 
     @Override
     public Subject findByname(String name) {
