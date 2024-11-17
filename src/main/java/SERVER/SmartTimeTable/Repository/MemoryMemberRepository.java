@@ -1,6 +1,7 @@
 package SERVER.SmartTimeTable.Repository;
 
 import SERVER.SmartTimeTable.Domain.Member;
+import SERVER.SmartTimeTable.Domain.Subject;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -67,6 +68,22 @@ public class MemoryMemberRepository implements MemberRepository {
         }
     }
 
+    @Override
+    public void addCurrentSubject(Member member, Subject subject) {
+        member.getCurrentSubject().add(subject);
+    }
+    @Override
+    public List<String> addCourse(Member member) {
+        List<String> allCourses = new ArrayList<>();
+        allCourses.addAll(member.getMajors());
+        allCourses.addAll(member.getCoreElectives());
+        allCourses.addAll(member.getCommonElectives());
+        return allCourses;
+    }
 
+    @Override
+    public void removeCurrentSubject(Member member, String subjectName) {
+        member.getCurrentSubject().removeIf(subject -> subject.getName().equals(subjectName));
+    }
 }
 

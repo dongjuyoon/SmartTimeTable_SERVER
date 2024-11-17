@@ -3,6 +3,8 @@ package SERVER.SmartTimeTable.Domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 public class Subject {
@@ -10,8 +12,6 @@ public class Subject {
     private String name; //강의명
     private String professor; //교수명
     private String lectureNumber; //강좌번호
-    private boolean recommendation = false; //추천
-
-
 
 }
+

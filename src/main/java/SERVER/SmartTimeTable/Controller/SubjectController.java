@@ -4,6 +4,7 @@ import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Domain.Subject;
 import SERVER.SmartTimeTable.Repository.MemoryMemberRepository;
 import SERVER.SmartTimeTable.Repository.MemorySubjectRepository;
+import SERVER.SmartTimeTable.Repository.SubjectRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.checkerframework.checker.units.qual.A;
@@ -54,7 +55,6 @@ public class SubjectController {
         if (majors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content
         }
-
         return ResponseEntity.ok(majors);
     }
     //모든 공통교양 과목 돌려줌
@@ -70,7 +70,11 @@ public class SubjectController {
         return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
 
-
-
+    @GetMapping("allSubjectsClassified")
+    public ResponseEntity<List<Subject>> allSubjectsClassified() {
+        return ResponseEntity.ok(subjectRepository.findAllSubjectsClassified());
+    }
 
 }
+
+

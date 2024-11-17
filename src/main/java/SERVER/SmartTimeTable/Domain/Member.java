@@ -28,21 +28,9 @@ public class Member {
         this.currentSubject = new ArrayList<>();
     }
 
-    public void addCurrentSubject(Subject subject) {
-        this.currentSubject.add(subject);
-    }
-    public List<String> addCourse() {
-        List<String> allCourses = new ArrayList<>();
-        allCourses.addAll(majors);
-        allCourses.addAll(coreElectives);
-        allCourses.addAll(commonElectives);
-        return allCourses;
-    }
 
 
-    public void removeCurrentSubject(String subjectName) {
-        this.currentSubject.removeIf(subject -> subject.getName().equals(subjectName));
-    }
+
 
 
 
