@@ -55,4 +55,5 @@ public class SubjectController {
         return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
 
+
 }
