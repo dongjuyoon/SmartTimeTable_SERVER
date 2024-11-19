@@ -19,7 +19,9 @@ public class Member {
     private List<String> commonElectives; // 공통 교양 과목 리스트
     private String studentId; // 학번
     private String email; // 이메일
-    private List<Subject> currentSubject; // 현재 이수중인 과목 리스트
+    private List<Subject> currentSubject;// 현재 이수중인 과목 리스트
+    private String semester; //현재 학기
+    private String grade;// 현재 학년
 
     public Member() {
         this.majors = new ArrayList<>();

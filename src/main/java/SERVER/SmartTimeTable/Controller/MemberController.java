@@ -77,7 +77,8 @@ public class MemberController {
         String id = params.get("id");
         String major = params.get("major");
         String studentId = params.get("student_id");
-
+        String semester = params.get("semester");
+        String grade = params.get("grade");
         try {
             // Member 객체 생성 및 설정
             Member member = memberRepository.findById(id);
@@ -87,6 +88,8 @@ public class MemberController {
             }
             member.setMajor(major);
             member.setStudentId(studentId);
+            member.setSemester(semester);
+            member.setGrade(grade);
             memberRepository.save(member);  // 변경 사항 저장
 
             return ResponseEntity.ok("아이디, 학과, 학번 성공");
@@ -504,9 +507,105 @@ public class MemberController {
         return ResponseEntity.ok(addMyPage); // 현재 수강 과목 반환
     }
 
-    //이수과목 내역 관리 수정
-    @PostMapping("{id}/completedCourseSave")
-    public ResponseEntity<String> completedCourseSave(@PathVariable String id, HttpServletRequest request) {
+    //학기 학년  수정
+    @PostMapping("{id}/completeSemesterGradeSave")
+    public ResponseEntity<String> completeSemesterGradeSave(@PathVariable String id, HttpServletRequest request) {
+        StringBuilder jsonBuilder = new StringBuilder();
+
+        // 요청 본문 읽기
+        try (BufferedReader reader = request.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        }
+
+        String json = jsonBuilder.toString();
+
+        // JSON 파싱
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, List<String>> requestBody;
+        try {
+            requestBody = objectMapper.readValue(json, new TypeReference<Map<String, List<String>>>() {});
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body("잘못된 JSON 형식입니다.");
+        }
+
+        // JSON에서 전공, 전공선택, 공통선택 과목 추출
+        String semester = requestBody.get("semester") != null ? requestBody.get("semester").get(0) : null;
+        String grade = requestBody.get("grade") != null ? requestBody.get("grade").get(0) : null;
+
+        if (semester == null || grade == null) {
+            return ResponseEntity.badRequest().body("학기 또는 성적 정보가 누락되었습니다.");
+        }
+
+        // 회원 조회
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+
+        // 과목 설정
+        member.setSemester(semester);
+        member.setGrade(grade);
+
+        // 저장 메서드 호출
+        memberRepository.save(member); // 업데이트된 멤버 객체 저장
+
+        return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
+    }
+    //이수 교양과목 내역 관리 수정
+    @PostMapping("{id}/completedCultureCourseSave")
+    public ResponseEntity<String> completedCultureCourseSave(@PathVariable String id, HttpServletRequest request) {
+        StringBuilder jsonBuilder = new StringBuilder();
+
+        // 요청 본문 읽기
+        try (BufferedReader reader = request.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 로그 추가
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        }
+
+        String json = jsonBuilder.toString();
+
+        // JSON 파싱
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, List<String>> requestBody;
+        try {
+            requestBody = objectMapper.readValue(json, new TypeReference<Map<String, List<String>>>() {});
+        } catch (IOException e) {
+            e.printStackTrace(); // 예외 로그 추가
+            return ResponseEntity.badRequest().body("잘못된 JSON 형식입니다.");
+        }
+
+        // JSON에서 전공, 전공선택, 공통선택 과목 추출
+        List<String> coreElectives = requestBody.get("coreElectives");
+        List<String> commonElectives = requestBody.get("commonElectives");
+
+        // 회원 조회
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+        }
+
+        // 과목 설정
+        member.setCoreElectives(coreElectives);
+        member.setCommonElectives(commonElectives);
+
+        // 저장 메서드 호출
+        memberRepository.save(member); // 업데이트된 멤버 객체 저장
+
+        return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
+    }
+    //이수 전공과목 내역 관리 수정
+    @PostMapping("{id}/completedMajorSave")
+    public ResponseEntity<String> completedMajorSave(@PathVariable String id, HttpServletRequest request) {
         StringBuilder jsonBuilder = new StringBuilder();
 
         // 요청 본문 읽기
@@ -534,8 +633,6 @@ public class MemberController {
 
         // JSON에서 전공, 전공선택, 공통선택 과목 추출
         List<String> majors = requestBody.get("majors");
-        List<String> coreElectives = requestBody.get("coreElectives");
-        List<String> commonElectives = requestBody.get("commonElectives");
 
         // 회원 조회
         Member member = memberRepository.findById(id);
@@ -545,8 +642,6 @@ public class MemberController {
 
         // 과목 설정
         member.setMajors(majors);
-        member.setCoreElectives(coreElectives);
-        member.setCommonElectives(commonElectives);
 
         // 저장 메서드 호출
         memberRepository.save(member); // 업데이트된 멤버 객체 저장
