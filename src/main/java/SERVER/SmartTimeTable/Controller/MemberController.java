@@ -13,10 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -556,7 +554,59 @@ public class MemberController {
         return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
     }
 
+    //추천 과목
+    @PostMapping("{id}/recommendedMajorSubjects")
+    public ResponseEntity<List<String>> recommendedMajorSubjects(@PathVariable String id,@RequestParam String grade, @RequestParam String semester) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        List<String> enrolledMajorElectives = member.getMajors();
+        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
+        Map<String, List<String>> coursePrerequisites = new HashMap<>() {{
+            put("자료구조", Collections.singletonList("C언어프로그래밍"));
+            put("웹 프로그래밍", Collections.singletonList("자료구조"));
+            put("팀프로젝트", Collections.singletonList("공학입문설계"));
+            put("컴퓨터하드웨어", Collections.singletonList("공학입문설계"));
+            put("알고리즘", Collections.singletonList("자료구조")); // 3학년에서만 추천
+            // 추가 과목과 선이수 과목 설정
+        }};
+
+        // 추천 과목 로직
+        for (Map.Entry<String, List<String>> entry : coursePrerequisites.entrySet()) {
+            String subject = entry.getKey();
+            List<String> prerequisites = entry.getValue();
+
+            // 선이수를 수강하지 않았다면 추천
+            if (!enrolledMajorElectives.containsAll(prerequisites)) {
+                Subject subjectEntity = subjectRepository.findByname(subject);
+                if (subjectEntity != null) {
+                    recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).add(subjectEntity);
+                }
+            }
+
+            // 3학년에서만 알고리즘 추천
+            if (subject.equals("알고리즘") && grade.equals("3학년") && enrolledMajorElectives.contains("공학입문설계")) {
+                Subject subjectEntity = subjectRepository.findByname(subject);
+                if (subjectEntity != null) {
+                    recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).add(subjectEntity);
+                }
+            }
+        }
+
+        // 추천 과목이 없으면 NO_CONTENT 상태로 응답
+        if (recommendedSubjectsMap.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        // 추천 과목 반환
+        return ResponseEntity.ok((List<String>) recommendedSubjectsMap);
+    }
+
 }
+
 
 
 
