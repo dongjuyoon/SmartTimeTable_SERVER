@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -554,7 +555,7 @@ public class MemberController {
         // 저장 메서드 호출
         memberRepository.save(member); // 업데이트된 멤버 객체 저장
 
-        return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
+        return ResponseEntity.ok("전공 과목 정보가 성공적으로 저장되었습니다.");
     }
     //이수 교양과목 내역 관리 수정
     @PostMapping("{id}/completedCultureCourseSave")
@@ -601,7 +602,7 @@ public class MemberController {
         // 저장 메서드 호출
         memberRepository.save(member); // 업데이트된 멤버 객체 저장
 
-        return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
+        return ResponseEntity.ok("교양 과목 정보가 성공적으로 저장되었습니다.");
     }
     //이수 전공과목 내역 관리 수정
     @PostMapping("{id}/completedMajorSave")
@@ -699,8 +700,142 @@ public class MemberController {
         // 추천 과목 반환
         return ResponseEntity.ok((List<String>) recommendedSubjectsMap);
     }
+    @PostMapping("{id}/recommendedCoreSubjects")
+    public ResponseEntity<Map<String, List<Subject>>> recommendedCoreSubjects(@PathVariable String id) {
+        // 회원 조회
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
 
-}
+        List<String> enrolledCoreElectives = member.getCoreElectives();
+
+        // 추천 과목 목록
+        List<List<String>> allRecommendedSubjects = List.of(
+                List.of("철학과 인간", "한국근현대사의 이해", "역사와 문명", "4차산업혁명을위한비판적사고", "디지털 콘텐츠로 만나는 한국의 문화유산"),
+                List.of("세계화와 사회변화", "민주주의와 현대사회", "창업입문", "여성·소수자·공동체", "현대사회와 심리학", "직무수행과 전략적 의사소통"),
+                List.of("고전으로읽는 인문학", "예술과창조성", "4차산업혁명시대의예술", "문화리터러시와창의적스토리텔링", "디지털문화의 이해"),
+                List.of("환경과 인간", "우주,생명,마음", "SW프로그래밍입문", "인공지능의 세계", "4차산업혁명의 이해", "파이썬을 활용한 데이터 분석과 인공지능")
+        );
+
+        // 추천 과목 맵 초기화
+        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
+
+        // 추천 과목 리스트 초기화
+        for (List<String> subjectList : allRecommendedSubjects) {
+            // 해당 그룹에 수강 중인 과목이 포함되어 있으면 전체 그룹 제외
+            if (enrolledCoreElectives.stream().anyMatch(subjectList::contains)) {
+                continue; // 이 그룹의 과목은 추천하지 않음
+            }
+
+            // 해당 그룹의 추천 과목을 찾기
+            List<Subject> subjects = new ArrayList<>();
+            for (String subjectName : subjectList) {
+                Subject subject = subjectRepository.findByname(subjectName);
+                if (subject != null) {
+                    subjects.add(subject);
+                }
+            }
+
+            // 추천 과목이 있는 경우 추가
+            if (!subjects.isEmpty()) {
+                recommendedSubjectsMap.put(subjectList.toString(), subjects);
+            }
+        }
+
+        // 추천 과목이 없으면 NO_CONTENT 상태 반환
+        if (recommendedSubjectsMap.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+
+        // 추천 과목 반환
+        return ResponseEntity.ok(recommendedSubjectsMap);
+    }
+
+    @PostMapping("{id}/recommendedCommonSubjects")
+        public ResponseEntity<List<String>> recommendedCommonSubjects(@PathVariable String id) {
+            Member member = memberRepository.findById(id);
+            if (member == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+            List<String> enrolledCommonElectives = member.getCommonElectives();
+            // 추천 과목군들
+            List<List<String>> allRecommendedSubjects = List.of(
+                    List.of("성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화"),
+                    List.of("글쓰기", "발표와토의"),
+                    List.of("영어1", "영어2","영어3", "영어4"),
+                    List.of("영어회화1", "영어회화2","영어회화3", "영어회화4"),
+                    List.of("4차산업혁명과 미래사회 진로선택", "디지털리터리시의 이해")
+            );
+            List<String> recommendedSubjects = new ArrayList<>();
+            // 1. "성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화" 리스트 처리
+            List<String> subjectGroup1 = allRecommendedSubjects.get(0);
+            long subjectGroup1Count = enrolledCommonElectives.stream()
+                    .filter(subjectGroup1::contains)
+                    .count();
+            if (subjectGroup1Count == 0) {
+                recommendedSubjects.addAll(subjectGroup1); // 아무것도 듣지 않았다면 모두 추천
+            } else if (subjectGroup1Count == 1) {
+                // 1개만 들었으면 그 과목 제외하고 나머지 과목들 추천
+                recommendedSubjects.addAll(subjectGroup1.stream()
+                        .filter(subject -> !enrolledCommonElectives.contains(subject))
+                        .collect(Collectors.toList()));
+            }
+            // 2. "글쓰기", "발표와토의" 리스트 처리
+            List<String> subjectGroup2 = allRecommendedSubjects.get(1);
+            if (enrolledCommonElectives.stream().anyMatch(subjectGroup2::contains)) {
+                // 하나라도 들었다면 이 리스트는 추천하지 않음
+            } else {
+                // 둘 다 안 들었으면 추천
+                recommendedSubjects.addAll(subjectGroup2);
+            }// 영어 과목 추천
+        boolean hasEnglish1 = enrolledCommonElectives.contains("영어1");
+        boolean hasEnglish2 = enrolledCommonElectives.contains("영어2");
+        boolean hasEnglish3 = enrolledCommonElectives.contains("영어3");
+        boolean hasEnglish4 = enrolledCommonElectives.contains("영어4");
+
+        if (!hasEnglish1 && !hasEnglish2 && !hasEnglish3 && !hasEnglish4) {
+            recommendedSubjects.add("영어1"); // 영어 과목을 듣지 않았다면 "영어1" 추천
+            recommendedSubjects.add("영어3"); // "영어3"도 추천
+        } else if (hasEnglish1) {
+            recommendedSubjects.add("영어2"); // "영어1"을 들었으면 "영어2" 추천
+        } else if (hasEnglish3) {
+            recommendedSubjects.add("영어4"); // "영어3"을 들었으면 "영어4" 추천
+        }
+
+// 영어 회화 과목 추천
+        boolean hasEnglishTalk1 = enrolledCommonElectives.contains("영어회화1");
+        boolean hasEnglishTalk2 = enrolledCommonElectives.contains("영어회화2");
+        boolean hasEnglishTalk3 = enrolledCommonElectives.contains("영어회화3");
+        boolean hasEnglishTalk4 = enrolledCommonElectives.contains("영어회화4");
+
+        if (!hasEnglishTalk1 && !hasEnglishTalk2 && !hasEnglishTalk3 && !hasEnglishTalk4) {
+            recommendedSubjects.add("영어회화1"); // 영어 회화 과목을 듣지 않았다면 "영어회화1" 추천
+            recommendedSubjects.add("영어회화3"); // "영어회화3"도 추천
+        } else if (hasEnglishTalk1) {
+            recommendedSubjects.add("영어회화2"); // "영어회화1"을 들었으면 "영어회화2" 추천
+        } else if (hasEnglishTalk3) {
+            recommendedSubjects.add("영어회화4"); // "영어회화3"을 들었으면 "영어회화4" 추천
+        }
+
+        // 7. "4차산업혁명과 미래사회 진로선택", "디지털리터리시의 이해" 리스트 처리
+            List<String> subjectGroup7 = allRecommendedSubjects.get(4);
+            if (enrolledCommonElectives.stream().anyMatch(subjectGroup7::contains)) {
+                // 하나라도 들었으면 추천하지 않음
+            } else {
+                recommendedSubjects.addAll(subjectGroup7);
+            }
+            // 추천 과목이 없으면 NO_CONTENT 상태로 응답
+            if (recommendedSubjects.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            }
+            // 추천 과목 반환
+            return ResponseEntity.ok(recommendedSubjects);
+        }
+
+
+
+    }
 
 
 
