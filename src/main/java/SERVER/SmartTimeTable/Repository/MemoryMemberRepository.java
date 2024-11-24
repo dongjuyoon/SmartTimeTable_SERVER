@@ -14,9 +14,12 @@ import java.util.Map;
 
 @Repository
 public class MemoryMemberRepository implements MemberRepository {
-    @Autowired
-    private MemberRepository memberRepository;
-    private final Map<String, Member> memberMap = new HashMap<>();
+
+    private final Map<String, Member> memberMap;
+    // 생성자에서 초기화
+    public MemoryMemberRepository() {
+        this.memberMap = new HashMap<>(); // 여기서 초기화
+    }
 
     @Override
     public Member findById(String id) {

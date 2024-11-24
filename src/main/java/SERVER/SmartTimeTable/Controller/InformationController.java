@@ -2,6 +2,7 @@ package SERVER.SmartTimeTable.Controller;
 
 import SERVER.SmartTimeTable.Domain.Information;
 import SERVER.SmartTimeTable.Repository.InformationRepository;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+
 @RequestMapping("/information")
 public class InformationController {
     private final InformationRepository informationRepository;

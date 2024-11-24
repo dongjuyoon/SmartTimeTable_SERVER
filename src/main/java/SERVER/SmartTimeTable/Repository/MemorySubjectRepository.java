@@ -21,8 +21,7 @@ import java.util.*;
 
 @Repository
 public class MemorySubjectRepository implements SubjectRepository {
-    @Autowired
-    private SubjectRepository subjectRepository;
+
     private final Map<String, Subject> subjectMap = new HashMap<>();
     private final Map<String, Subject> majorsMap = new HashMap<>();
     private final Map<String, Subject> coreElectivesMap = new HashMap<>();
@@ -252,12 +251,12 @@ public class MemorySubjectRepository implements SubjectRepository {
                         subjectInfoObj.setProfessor(professorName); // 교수명
                         subjectInfoObj.setClassTime(columns.get(3).getText()); // 요일 및 강의 시간
 
-
                         System.out.println(subjectInfoObj.getLectureNumber());
                         System.out.println(subjectInfoObj.getName());
                         System.out.println(subjectInfoObj.getProfessor());
 
                           save(subjectInfoObj); // 과목 저장
+
                         if (subjectInfoObj.getName().contains("JEJ")) {
                             majorsMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("전공에 추가");
@@ -659,7 +658,7 @@ public class MemorySubjectRepository implements SubjectRepository {
     @Override
     public void addRecommendedSubject(String subject, Map<String, List<Subject>> recommendedSubjectsMap) {
 
-        Subject subjectEntity = subjectRepository.findByName(subject);
+        Subject subjectEntity = findByName(subject); // findByName 메서드 사용
 
         if (subjectEntity == null) {
             System.out.println("과목이 존재하지 않습니다");
@@ -692,7 +691,7 @@ public class MemorySubjectRepository implements SubjectRepository {
             // 해당 그룹의 추천 과목을 찾기
             List<Subject> subjects = new ArrayList<>();
             for (String subjectName : subjectList) {
-                Subject subject = subjectRepository.findByName(subjectName);
+                Subject subject = findByName(subjectName); // findByName 호출
                 if (subject != null) {
                     subjects.add(subject);
                 }
