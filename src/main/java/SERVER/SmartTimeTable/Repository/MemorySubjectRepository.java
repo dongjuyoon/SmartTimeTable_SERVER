@@ -1,5 +1,6 @@
 package SERVER.SmartTimeTable.Repository;
 
+import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Domain.Subject;
 import jakarta.annotation.PostConstruct;
 import org.openqa.selenium.By;
@@ -16,13 +17,12 @@ import org.springframework.web.client.RestTemplate;
 
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class MemorySubjectRepository implements SubjectRepository {
+    @Autowired
+    private SubjectRepository subjectRepository;
     private final Map<String, Subject> subjectMap = new HashMap<>();
     private final Map<String, Subject> majorsMap = new HashMap<>();
     private final Map<String, Subject> coreElectivesMap = new HashMap<>();
@@ -193,7 +193,7 @@ public class MemorySubjectRepository implements SubjectRepository {
 
 
     @Override
-    public Subject findByname(String name) {
+    public Subject findByName(String name) {
         return subjectMap.get(name);
     }
 
@@ -563,6 +563,7 @@ public class MemorySubjectRepository implements SubjectRepository {
         return new ArrayList<>(commonElectivesMap.values());
     }
 
+    @Override
     public List<Subject> getAllElectives(){
         List<Subject> allElectives = new ArrayList<>();
         allElectives.addAll(getMajors());
@@ -571,5 +572,212 @@ public class MemorySubjectRepository implements SubjectRepository {
 
         return allElectives;
     }
+    // 과목의 선이수 조건을 정의하고 반환하는 메서드
+    @Override
+    public Map<String, List<String>> getCoursePrerequisites() {
+        return new HashMap<>() {{
+            put("자료구조", Collections.singletonList("C언어프로그래밍"));
+            put("객체지향프로그래밍1", Collections.singletonList("C언어프로그래밍"));
+            put("객체지향프로그래밍2", Collections.singletonList("객체지향프로그래밍1"));
+            put("알고리즘", Collections.singletonList("자료구조"));
+            put("고급객체지향프로그래밍", Collections.singletonList("객체지향프로그래밍2"));
+            put("팀프로젝트", Collections.singletonList("공학입문설계"));
+            put("컴퓨터하드웨어", Collections.singletonList("공학입문설계"));
+            put("시스템분석 및 설계", Collections.singletonList("공학입문설계"));
+            put("임베디드시스템", Arrays.asList("컴퓨터하드웨어", "공개SW실무"));
+            put("캡스톤디자인", Collections.singletonList("소프트웨어공학"));
+            put("컴퓨터아키텍처", Collections.singletonList("컴퓨터하드웨어"));
+            put("컴퓨터네트워크", Collections.singletonList("컴퓨터하드웨어"));
+            put("데이터베이스설계", Collections.singletonList("데이터베이스"));
+        }};
+    }
+
+    // 선이수 과목을 추천하는 메서드
+    @Override
+    public void recommendPrerequisites(List<String> enrolledMajorElectives,
+                                        Map<String, List<Subject>> recommendedSubjectsMap,
+                                        List<String> prerequisites) {
+        for (String prerequisite : prerequisites) {
+            if (!enrolledMajorElectives.contains(prerequisite)) {
+                addRecommendedSubject(prerequisite, recommendedSubjectsMap);
+            }
+        }
+    }
+
+    // 학년 및 학기에 따른 과목 추천 메서드
+    @Override
+  public  void recommendSubjectsByGradeAndSemester(String grade, String semester, String subject,
+                                                     List<String> enrolledMajorElectives,
+                                                     Map<String, List<Subject>> recommendedSubjectsMap) {
+        switch (grade) {
+            case "1":
+                if (semester.equals("1")) {
+                    if (subject.equals("C언어프로그래밍") || subject.equals("공학입문설계")) {
+                        addRecommendedSubject(subject, recommendedSubjectsMap);
+                    }
+                } else if (semester.equals("2") && subject.equals("객체지향프로그래밍1")
+                        && enrolledMajorElectives.contains("C언어프로그래밍")) {
+                    addRecommendedSubject(subject, recommendedSubjectsMap);
+                }
+                break;
+            case "2":
+                if (semester.equals("1")) {
+                    if (subject.equals("자료구조") || subject.equals("객체지향프로그래밍2")
+                            || (subject.equals("컴퓨터하드웨어") && enrolledMajorElectives.contains("공학입문설계"))) {
+                        addRecommendedSubject(subject, recommendedSubjectsMap);
+                    }
+                } else if (semester.equals("2") && subject.equals("팀프로젝트")
+                        && enrolledMajorElectives.contains("공학입문설계")) {
+                    addRecommendedSubject(subject, recommendedSubjectsMap);
+                }
+                break;
+            case "3":
+                if (semester.equals("1")) {
+                    if (subject.equals("데이터베이스") || subject.equals("소프트웨어공학") || subject.equals("운영체제")
+                            || (subject.equals("컴퓨터네트워크") && enrolledMajorElectives.contains("컴퓨터하드웨어"))
+                            || (subject.equals("컴퓨터아키텍처") && enrolledMajorElectives.contains("컴퓨터하드웨어"))) {
+                        addRecommendedSubject(subject, recommendedSubjectsMap);
+                    }
+                } else if (semester.equals("2") && (subject.equals("알고리즘") && enrolledMajorElectives.contains("자료구조"))
+                        || (subject.equals("데이터베이스설계") && enrolledMajorElectives.contains("데이터베이스"))) {
+                    addRecommendedSubject(subject, recommendedSubjectsMap);
+                }
+                break;
+            case "4":
+                if (semester.equals("1")) {
+                    if (subject.equals("캡스톤 디자인") && !enrolledMajorElectives.contains("소프트웨어공학")) {
+                        addRecommendedSubject(subject, recommendedSubjectsMap);
+                    }
+                } else if (semester.equals("2")) {
+                    addRecommendedSubject(subject, recommendedSubjectsMap);
+                }
+                break;
+        }
+    }
+
+    // 추천 과목을 추가하는 메서드
+    @Override
+    public void addRecommendedSubject(String subject, Map<String, List<Subject>> recommendedSubjectsMap) {
+
+        Subject subjectEntity = subjectRepository.findByName(subject);
+
+        if (subjectEntity == null) {
+            System.out.println("과목이 존재하지 않습니다");
+            return;
+        }
+        recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).add(subjectEntity);
+    }
+    public Map<String, List<Subject>> findRecommendedCoreSubjects(Member member) {
+        // 수강 중인 과목 리스트
+        List<String> enrolledCoreElectives = member.getCoreElectives();
+
+        // 추천 과목 목록
+        List<List<String>> allRecommendedSubjects = List.of(
+                List.of("철학과 인간", "한국근현대사의 이해", "역사와 문명", "4차산업혁명을위한비판적사고", "디지털 콘텐츠로 만나는 한국의 문화유산"),
+                List.of("세계화와 사회변화", "민주주의와 현대사회", "창업입문", "여성·소수자·공동체", "현대사회와 심리학", "직무수행과 전략적 의사소통"),
+                List.of("고전으로읽는 인문학", "예술과창조성", "4차산업혁명시대의예술", "문화리터러시와창의적스토리텔링", "디지털문화의 이해"),
+                List.of("환경과 인간", "우주, 생명, 마음", "SW프로그래밍입문", "인공지능의 세계", "4차산업혁명의 이해", "파이썬을 활용한 데이터 분석과 인공지능")
+        );
+
+        // 추천 과목 맵 초기화
+        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
+
+        // 추천 과목 리스트 초기화
+        for (List<String> subjectList : allRecommendedSubjects) {
+            // 해당 그룹에 수강 중인 과목이 포함되어 있으면 전체 그룹 제외
+            if (enrolledCoreElectives.stream().anyMatch(subjectList::contains)) {
+                continue; // 이 그룹의 과목은 추천하지 않음
+            }
+
+            // 해당 그룹의 추천 과목을 찾기
+            List<Subject> subjects = new ArrayList<>();
+            for (String subjectName : subjectList) {
+                Subject subject = subjectRepository.findByName(subjectName);
+                if (subject != null) {
+                    subjects.add(subject);
+                }
+            }
+
+            // 추천 과목이 있는 경우 추가
+            if (!subjects.isEmpty()) {
+                recommendedSubjectsMap.put(subjectList.toString(), subjects);
+            }
+        }
+
+        return recommendedSubjectsMap;
+    }
+    public List<String> findRecommendedCommonSubjects(Member member) {
+        List<String> enrolledCommonElectives = member.getCommonElectives();
+
+        // 추천 과목군들
+        List<List<String>> allRecommendedSubjects = List.of(
+                List.of("성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화"),
+                List.of("글쓰기", "발표와토의"),
+                List.of("영어1", "영어2", "영어3", "영어4"),
+                List.of("영어회화1", "영어회화2", "영어회화3", "영어회화4"),
+                List.of("4차산업혁명과 미래사회 진로선택", "디지털리터리시의 이해")
+        );
+
+        List<String> recommendedSubjects = new ArrayList<>();
+
+        // 1. 첫 번째 그룹 처리
+        List<String> subjectGroup1 = allRecommendedSubjects.get(0);
+        long subjectGroup1Count = enrolledCommonElectives.stream().filter(subjectGroup1::contains).count();
+        if (subjectGroup1Count == 0) {
+            recommendedSubjects.addAll(subjectGroup1); // 아무것도 듣지 않으면 모두 추천
+        } else if (subjectGroup1Count == 1) {
+            recommendedSubjects.addAll(subjectGroup1.stream()
+                    .filter(subject -> !enrolledCommonElectives.contains(subject))
+                    .toList());
+        }
+
+        // 2. 두 번째 그룹 처리
+        List<String> subjectGroup2 = allRecommendedSubjects.get(1);
+        if (!enrolledCommonElectives.stream().anyMatch(subjectGroup2::contains)) {
+            recommendedSubjects.addAll(subjectGroup2); // 둘 다 안 들으면 추천
+        }
+
+        // 3. 영어 과목 추천 처리
+        boolean hasEnglish1 = enrolledCommonElectives.contains("영어1");
+        boolean hasEnglish2 = enrolledCommonElectives.contains("영어2");
+        boolean hasEnglish3 = enrolledCommonElectives.contains("영어3");
+        boolean hasEnglish4 = enrolledCommonElectives.contains("영어4");
+
+        if (!hasEnglish1 && !hasEnglish2 && !hasEnglish3 && !hasEnglish4) {
+            recommendedSubjects.add("영어1");
+            recommendedSubjects.add("영어3");
+        } else if (hasEnglish1) {
+            recommendedSubjects.add("영어2");
+        } else if (hasEnglish3) {
+            recommendedSubjects.add("영어4");
+        }
+
+        // 4. 영어 회화 과목 추천 처리
+        boolean hasEnglishTalk1 = enrolledCommonElectives.contains("영어회화1");
+        boolean hasEnglishTalk2 = enrolledCommonElectives.contains("영어회화2");
+        boolean hasEnglishTalk3 = enrolledCommonElectives.contains("영어회화3");
+        boolean hasEnglishTalk4 = enrolledCommonElectives.contains("영어회화4");
+
+        if (!hasEnglishTalk1 && !hasEnglishTalk2 && !hasEnglishTalk3 && !hasEnglishTalk4) {
+            recommendedSubjects.add("영어회화1");
+            recommendedSubjects.add("영어회화3");
+        } else if (hasEnglishTalk1) {
+            recommendedSubjects.add("영어회화2");
+        } else if (hasEnglishTalk3) {
+            recommendedSubjects.add("영어회화4");
+        }
+
+        // 5. 마지막 그룹 처리
+        List<String> subjectGroup7 = allRecommendedSubjects.get(4);
+        if (!enrolledCommonElectives.stream().anyMatch(subjectGroup7::contains)) {
+            recommendedSubjects.addAll(subjectGroup7);
+        }
+
+        return recommendedSubjects;
+    }
+
+
+
+
 
 }

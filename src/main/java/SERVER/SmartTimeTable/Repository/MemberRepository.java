@@ -2,6 +2,7 @@ package SERVER.SmartTimeTable.Repository;
 
 import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Domain.Subject;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

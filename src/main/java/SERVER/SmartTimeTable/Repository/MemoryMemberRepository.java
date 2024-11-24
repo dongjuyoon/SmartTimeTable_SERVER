@@ -2,6 +2,9 @@ package SERVER.SmartTimeTable.Repository;
 
 import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Domain.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -11,6 +14,8 @@ import java.util.Map;
 
 @Repository
 public class MemoryMemberRepository implements MemberRepository {
+    @Autowired
+    private MemberRepository memberRepository;
     private final Map<String, Member> memberMap = new HashMap<>();
 
     @Override
@@ -85,5 +90,7 @@ public class MemoryMemberRepository implements MemberRepository {
     public void removeCurrentSubject(Member member, String subjectName) {
         member.getCurrentSubject().removeIf(subject -> subject.getName().equals(subjectName));
     }
+
+
 }
 
