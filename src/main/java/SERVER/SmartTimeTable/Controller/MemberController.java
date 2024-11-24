@@ -21,15 +21,20 @@ import com.fasterxml.jackson.core.type.TypeReference;
 @CrossOrigin(origins = "*") // CORS 설정
 public class MemberController {
 
-    private final MemberRepository memberRepository;
-    private final SubjectRepository subjectRepository;
+
+    private MemberRepository memberRepository;
+    private SubjectRepository subjectRepository;
+
 
     @Autowired
-    public MemberController(MemberRepository memberRepository, SubjectRepository subjectRepository) {
+    public void setMemberRepository(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-        this.subjectRepository = subjectRepository;
     }
 
+    @Autowired
+    public void setSubjectRepository(SubjectRepository subjectRepository) {
+        this.subjectRepository = subjectRepository;
+    }
 
     // 아이디 중복 체크 메소드
     @GetMapping("/checkId")
