@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface MemberRepository {
     Member findById(String id);
-    Member findByPassword(String password);
     void save(Member member);
     List<Member> findAll();
 

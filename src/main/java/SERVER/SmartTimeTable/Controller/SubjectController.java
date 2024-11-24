@@ -4,10 +4,6 @@ import SERVER.SmartTimeTable.Domain.Member;
 import SERVER.SmartTimeTable.Domain.Subject;
 import SERVER.SmartTimeTable.Repository.MemoryMemberRepository;
 import SERVER.SmartTimeTable.Repository.MemorySubjectRepository;
-import SERVER.SmartTimeTable.Repository.SubjectRepository;
-import lombok.Getter;
-import lombok.Setter;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,12 +65,6 @@ public class SubjectController {
 
         return ResponseEntity.ok(subjectRepository.getCoreElectives());
     }
-
-    @GetMapping("allSubjectsClassified")
-    public ResponseEntity<List<Subject>> allSubjectsClassified() {
-        return ResponseEntity.ok(subjectRepository.findAllSubjectsClassified());
-    }
-
 }
 
 
