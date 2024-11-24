@@ -8,8 +8,7 @@ public class SmartTimeTableApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SmartTimeTableApplication.class, args);
-//푸시 제데로 됐는지 확인용
-		//완료
+		//완성이야 윤호
 	}
 
 }
