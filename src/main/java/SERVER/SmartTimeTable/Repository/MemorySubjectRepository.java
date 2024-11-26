@@ -10,10 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.client.RestTemplate;
 
 
 import java.time.Duration;
@@ -26,6 +23,7 @@ public class MemorySubjectRepository implements SubjectRepository {
     private final Map<String, Subject> majorsMap = new HashMap<>();
     private final Map<String, Subject> coreElectivesMap = new HashMap<>();
     private final Map<String, Subject> commonElectivesMap = new HashMap<>();
+    private List<String> allMajors = new ArrayList<>();
 
 
 
@@ -54,11 +52,11 @@ public class MemorySubjectRepository implements SubjectRepository {
     public void fetchCourseData() {
         //os용
         System.setProperty("webdriver.chrome.driver", "/Users/holang/Downloads/chromedriver-mac-x64/chromedriver");
-        //window용
-/*
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\82108\\Downloads\\chromedriver-win64(130.0.6723.31)\\chromedriver-win64\\chromedriver.exe");
-*/
+        /*//window용
 
+        System.setProperty("webdriver.chrome.driver", "C:\\Users\\82108\\Downloads\\chromedriver-win64(130.0.6723.31)\\chromedriver-win64\\chromedriver.exe");
+
+*/
         ChromeOptions options = new ChromeOptions();
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://lms.mju.ac.kr/ilos/st/main/course_ing_list_form.acl");
@@ -100,19 +98,47 @@ public class MemorySubjectRepository implements SubjectRepository {
                             majorsMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("전공에 추가");
 
-
-
-
-                        } else if (subjectInfoObj.getName().contains("철학과인간") || subjectInfoObj.getName().contains("한국근현대사의이해") || subjectInfoObj.getName().contains("역사와문명") || subjectInfoObj.getName().contains("4차산업혁명을위한비판적사고") || subjectInfoObj.getName().contains("디지털콘텐츠로만나는한국의 문화유산") || subjectInfoObj.getName().contains("세계화와 사회변화") || subjectInfoObj.getName().contains("민주주의와 현대사회") || subjectInfoObj.getName().contains("창업입문") || subjectInfoObj.getName().contains("여성·소수자·공동체") || subjectInfoObj.getName().contains("현대사회와 심리학") || subjectInfoObj.getName().contains("직무수행과 전략적 의사소통") || subjectInfoObj.getName().contains("글로벌문화") || subjectInfoObj.getName().contains("고전으로읽는 인문학") || subjectInfoObj.getName().contains("예술과창조성") || subjectInfoObj.getName().contains("4차산업혁명시대의예술") || subjectInfoObj.getName().contains("문화리터러시와창의적스토리텔링") || subjectInfoObj.getName().contains("디지털문화의 이해") || subjectInfoObj.getName().contains("환경과 인간") || subjectInfoObj.getName().contains("우주,생명,마음") || subjectInfoObj.getName().contains("SW프로그래밍입문") || subjectInfoObj.getName().contains("인공지능의 세계") || subjectInfoObj.getName().contains("4차산업혁명의 이해") || subjectInfoObj.getName().contains("파이썬을활용한데이터분석과인공지능") || subjectInfoObj.getName().contains("외국인학생을위한컴퓨터활용")) {
+                        } else if (subjectInfoObj.getName().contains("철학과인간") || subjectInfoObj.getName().contains("한국근현대사의이해") || subjectInfoObj.getName().contains("역사와문명") || subjectInfoObj.getName().contains("4차산업혁명을위한비판적사고") || subjectInfoObj.getName().contains("디지털콘텐츠로만나는한국의문화유산") || subjectInfoObj.getName().contains("세계화와사회변화") || subjectInfoObj.getName().contains("민주주의와현대사회") || subjectInfoObj.getName().contains("창업입문") || subjectInfoObj.getName().contains("여성·소수자·공동체") || subjectInfoObj.getName().contains("현대사회와심리학") || subjectInfoObj.getName().contains("직무수행과전략적의사소통") || subjectInfoObj.getName().contains("글로벌문화") || subjectInfoObj.getName().contains("고전으로읽는인문학") || subjectInfoObj.getName().contains("예술과창조성") || subjectInfoObj.getName().contains("4차산업혁명시대의예술") || subjectInfoObj.getName().contains("문화리터러시와창의적스토리텔링") || subjectInfoObj.getName().contains("디지털문화의이해") || subjectInfoObj.getName().contains("환경과인간") || subjectInfoObj.getName().contains("우주,생명,마음") || subjectInfoObj.getName().contains("SW프로그래밍입문") || subjectInfoObj.getName().contains("인공지능의세계") || subjectInfoObj.getName().contains("4차산업혁명의이해") || subjectInfoObj.getName().contains("파이썬을활용한데이터분석과인공지능") || subjectInfoObj.getName().contains("외국인학생을위한컴퓨터활용")) {
                             coreElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("핵심에 추가");
-
-                        } else if (subjectInfoObj.getName().contains("채플") || subjectInfoObj.getName().contains("성서와인간이해") || subjectInfoObj.getName().contains("현대사회와 기독교 윤리") || subjectInfoObj.getName().contains("종교와과학") || subjectInfoObj.getName().contains("기독교와문화") || subjectInfoObj.getName().contains("글쓰기") || subjectInfoObj.getName().contains("발표와토의") || subjectInfoObj.getName().contains("영어1") || subjectInfoObj.getName().contains("영어2") || subjectInfoObj.getName().contains("영어3") || subjectInfoObj.getName().contains("영어4") || subjectInfoObj.getName().contains("영어회화1") || subjectInfoObj.getName().contains("영어회화2") || subjectInfoObj.getName().contains("영어회화3") || subjectInfoObj.getName().contains("영어회화4") || subjectInfoObj.getName().contains("4차산업혁명과 미래사회 진로선택") || subjectInfoObj.getName().contains("디지털리터리시의 이해")) {
+                        } else if (subjectInfoObj.getName().contains("채플") || subjectInfoObj.getName().contains("성서와인간이해") || subjectInfoObj.getName().contains("현대사회와기독교윤리") || subjectInfoObj.getName().contains("종교와과학") || subjectInfoObj.getName().contains("기독교와문화") || subjectInfoObj.getName().contains("글쓰기") || subjectInfoObj.getName().contains("발표와토의") || subjectInfoObj.getName().contains("영어1") || subjectInfoObj.getName().contains("영어2") || subjectInfoObj.getName().contains("영어3") || subjectInfoObj.getName().contains("영어4") || subjectInfoObj.getName().contains("영어회화1") || subjectInfoObj.getName().contains("영어회화2") || subjectInfoObj.getName().contains("영어회화3") || subjectInfoObj.getName().contains("영어회화4") || subjectInfoObj.getName().contains("4차산업혁명과미래사회진로선택") || subjectInfoObj.getName().contains("디지털리터리시의이해")) {
                             commonElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("공통에 추가");
+                    }
+                        allMajors.add("C언어프로그래밍");
+                        allMajors.add("공학입문설계");
+                        allMajors.add("객체지향프로그래밍1");
+                        allMajors.add("자료구조");
+                        allMajors.add("객체지향프로그래밍2");
+                        allMajors.add("컴퓨터하드웨어");
+                        allMajors.add("팀프로젝트1");
+                        allMajors.add("웹프로그래밍");
+                        allMajors.add("공개SW실무");
+                        allMajors.add("고급객체지향프로그래밍");
+                        allMajors.add("데이터베이스");
+                        allMajors.add("소프트웨어공학");
+                        allMajors.add("운영체제");
+                        allMajors.add("컴퓨터네트워크");
+                        allMajors.add("컴퓨터아키텍처");
+                        allMajors.add("시스템분석 및 설계");
+                        allMajors.add("팀프로젝트2");
+                        allMajors.add("알고리즘");
+                        allMajors.add("데이터베이스설계");
+                        allMajors.add("시스템프로그래밍");
+                        allMajors.add("프로그래밍언어");
+                        allMajors.add("임베디드시스템");
+                        allMajors.add("컴퓨터 보안");
+                        allMajors.add("캡스톤 디자인");
+                        allMajors.add("블록체인");
+                        allMajors.add("컴퓨터그래픽스");
+                        allMajors.add("시스템클라우드보안");
+                        allMajors.add("기계학습");
+                        allMajors.add("인공지능");
+                        allMajors.add("모바일프로그래밍");
+                        allMajors.add("백엔드소프트웨어개발");
+                        allMajors.add("클라우드컴퓨팅");
+                        allMajors.add("현장실습");
 
-
-                        }
                     }
                 }
 
@@ -134,16 +160,15 @@ public class MemorySubjectRepository implements SubjectRepository {
                 } catch (Exception e) {
                     System.err.println("데이터 크롤링 중 오류 발생: " + e.getMessage());
                     driver.quit(); // 드라이버 종료
-/*
+
                     e.printStackTrace(); // 스택 트레이스를 출력하여 문제를 진단
-*/
+
                 }
             }
         } finally {
             driver.quit(); // 드라이버 종료
         }
     }
-
     public void addSubject(Subject subject) {
         subjectMap.put(subject.getName(), subject);
     }
@@ -166,6 +191,11 @@ public class MemorySubjectRepository implements SubjectRepository {
     @Override
     public List<Subject> getMajors(){
         return new ArrayList<>(majorsMap.values());
+    }
+
+    @Override
+    public List<String> getAllMajors(){
+        return allMajors;
     }
 
     @Override
@@ -308,10 +338,10 @@ public class MemorySubjectRepository implements SubjectRepository {
 
         // 추천 과목 목록
         List<List<String>> allRecommendedSubjects = List.of(
-                List.of("철학과 인간", "한국근현대사의 이해", "역사와 문명", "4차산업혁명을위한비판적사고", "디지털 콘텐츠로 만나는 한국의 문화유산"),
-                List.of("세계화와 사회변화", "민주주의와 현대사회", "창업입문", "여성·소수자·공동체", "현대사회와 심리학", "직무수행과 전략적 의사소통"),
-                List.of("고전으로읽는 인문학", "예술과창조성", "4차산업혁명시대의예술", "문화리터러시와창의적스토리텔링", "디지털문화의 이해"),
-                List.of("환경과 인간", "우주, 생명, 마음", "SW프로그래밍입문", "인공지능의 세계", "4차산업혁명의 이해", "파이썬을 활용한 데이터 분석과 인공지능")
+                List.of("철학과인간", "한국근현대사의이해", "역사와문명", "4차산업혁명을위한비판적사고", "디지털콘텐츠로만나는한국의문화유산"),
+                List.of("세계화와사회변화", "민주주의와현대사회", "창업입문", "여성·소수자·공동체", "현대사회와심리학", "직무수행과전략적의사소통"),
+                List.of("고전으로읽는인문학", "예술과창조성", "4차산업혁명시대의예술", "문화리터러시와창의적스토리텔링", "디지털문화의이해"),
+                List.of("환경과인간", "우주,생명,마음", "SW프로그래밍입문", "인공지능의세계", "4차산업혁명의이해", "파이썬을활용한데이터분석과인공지능")
         );
 
         // 추천 과목 맵 초기화
@@ -346,11 +376,11 @@ public class MemorySubjectRepository implements SubjectRepository {
 
         // 추천 과목군들
         List<List<String>> allRecommendedSubjects = List.of(
-                List.of("성서와인간이해", "현대사회와 기독교 윤리", "종교와과학", "기독교와문화"),
+                List.of("성서와인간이해", "현대사회와기독교윤리", "종교와과학", "기독교와문화"),
                 List.of("글쓰기", "발표와토의"),
                 List.of("영어1", "영어2", "영어3", "영어4"),
                 List.of("영어회화1", "영어회화2", "영어회화3", "영어회화4"),
-                List.of("4차산업혁명과 미래사회 진로선택", "디지털리터리시의 이해")
+                List.of("4차산업혁명과미래사회진로선택", "디지털리터리시의이해")
         );
 
         List<String> recommendedSubjects = new ArrayList<>();

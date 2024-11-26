@@ -39,4 +39,5 @@ public interface SubjectRepository {
     Map<String, List<Subject>> findRecommendedCoreSubjects(Member member);
     List<String> findRecommendedCommonSubjects(Member member);
 
+    List<String> getAllMajors();
 }

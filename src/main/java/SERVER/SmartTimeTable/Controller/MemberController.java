@@ -257,6 +257,7 @@ public class MemberController {
         }
         return ResponseEntity.ok("로그인 성공");
     }
+
     //아이디찾기
     @GetMapping("/findId")
     public ResponseEntity<String> findId(
@@ -272,6 +273,7 @@ public class MemberController {
         String userId = members.get(0).getId();
         return ResponseEntity.ok("아이디: " + userId);
     }
+
     //비번찾기
     @GetMapping("/findPassword")
     public ResponseEntity<String> findPassword(
@@ -287,6 +289,7 @@ public class MemberController {
         String userpassword = members.get(0).getPassword();
         return ResponseEntity.ok("비밀번호:"+userpassword);
     }
+
 
     //현재 수강중인 과목
     @GetMapping("/{id}/current-subjects")
@@ -364,16 +367,40 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content 응답
     }
 
-    //수강했던 과목 돌려줌
-    @GetMapping("/{id}/completedCourseHistoryManagement1")
-    public ResponseEntity<List<String>> completedCourseHistoryManagement1(@PathVariable String id) {
+    //수강했던 전공 과목 조회
+    @GetMapping("/{id}/completedCourseHistoryManagementMajor")
+    public ResponseEntity<List<String>> completedCourseHistoryManagementMajor(@PathVariable String id) {
         Member member = memberRepository.findById(id);
 
         if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(memberRepository.addCourse(member)); // 현재 수강 과목 반환
+        return ResponseEntity.ok(memberRepository.getCurrentMajors(member)); // 현재 수강 과목 반환
+    }
+
+    // 수강했던 핵심 교양 과목 조회
+    @GetMapping("/{id}/completedCourseHistoryManagementCore")
+    public ResponseEntity<List<String>> completedCourseHistoryManagementCore(@PathVariable String id) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok(memberRepository.getCurrentCoreElectives(member)); // 현재 수강 과목 반환
+    }
+
+    // 수강했던 공통 교양 과목 조회
+    @GetMapping("/{id}/completedCourseHistoryManagementCommon")
+    public ResponseEntity<List<String>> completedCourseHistoryManagementCommon(@PathVariable String id) {
+        Member member = memberRepository.findById(id);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        return ResponseEntity.ok(memberRepository.getCurrentCommonElectives(member)); // 현재 수강 과목 반환
     }
 
     //공통,핵심 전공 과목 돌려줌
@@ -446,19 +473,27 @@ public class MemberController {
 
     //멤버 정보(학과 학번 이메일) myPage
     @GetMapping("/{id}/myPage")
-    public ResponseEntity<String> myPage(@PathVariable String id) {
+    public ResponseEntity<Map<String, String>> myPage(@PathVariable String id) {
         Member member = memberRepository.findById(id);
 
         if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 사용자를 찾을 수 없습니다."));
         }
-        String addMyPage= member.getMajor()+member.getStudentId()+member.getSemester()+member.getGrade()+member.getName()+member.getId();
 
-        return ResponseEntity.ok(addMyPage); // 멤버정보 반환
+        Map<String, String> memberInfo = new HashMap<>();
+        memberInfo.put("name", member.getName());
+        memberInfo.put("major", member.getMajor());
+        memberInfo.put("id", member.getId());
+        memberInfo.put("std_id", member.getStudentId());
+        memberInfo.put("email", member.getEmail());
+        memberInfo.put("grade", member.getGrade());
+        memberInfo.put("semester", member.getSemester());
+
+        return ResponseEntity.ok(memberInfo); // 멤버정보 반환
     }
 
-    //학기 학년  수정
-    @PostMapping("{id}/completeSemesterGradeSave")
+    //학년 학기 수정
+    @PostMapping("{id}/manageGradeSemester")
     public ResponseEntity<String> completeSemesterGradeSave(@PathVariable String id, HttpServletRequest request) {
         StringBuilder jsonBuilder = new StringBuilder();
 
@@ -476,16 +511,16 @@ public class MemberController {
 
         // JSON 파싱
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, List<String>> requestBody;
+        Map<String, String> requestBody;
         try {
-            requestBody = objectMapper.readValue(json, new TypeReference<Map<String, List<String>>>() {});
+            requestBody = objectMapper.readValue(json, new TypeReference<Map<String, String>>() {});
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("잘못된 JSON 형식입니다.");
         }
 
-
-        String semester = requestBody.get("semester") != null ? requestBody.get("semester").get(0) : null;
-        String grade = requestBody.get("grade") != null ? requestBody.get("grade").get(0) : null;
+        // JSON에서 학기 및 성적 정보 추출
+        String semester = requestBody.get("semester");
+        String grade = requestBody.get("grade");
 
         if (semester == null || grade == null) {
             return ResponseEntity.badRequest().body("학기 또는 성적 정보가 누락되었습니다.");
@@ -501,13 +536,15 @@ public class MemberController {
         member.setSemester(semester);
         member.setGrade(grade);
 
-        // 저장 메서드 호출
-        memberRepository.save(member); // 업데이트된 멤버 객체 저장
+        // 변경사항 저장
+        memberRepository.save(member);
 
-        return ResponseEntity.ok("전공 과목 정보가 성공적으로 저장되었습니다.");
+        return ResponseEntity.ok("학기 및 성적 정보가 성공적으로 저장되었습니다.");
     }
+
+
     //이수 교양과목 내역 관리 수정
-    @PostMapping("{id}/completedCultureCourseSave")
+    @PostMapping("{id}/manageCompletedElectives")
     public ResponseEntity<String> completedCultureCourseSave(@PathVariable String id, HttpServletRequest request) {
         StringBuilder jsonBuilder = new StringBuilder();
 
@@ -553,8 +590,9 @@ public class MemberController {
 
         return ResponseEntity.ok("교양 과목 정보가 성공적으로 저장되었습니다.");
     }
+
     //이수 전공과목 내역 관리 수정
-    @PostMapping("{id}/completedMajorSave")
+    @PostMapping("{id}/manageCompletedMajors")
     public ResponseEntity<String> completedMajorSave(@PathVariable String id, HttpServletRequest request) {
         StringBuilder jsonBuilder = new StringBuilder();
 
@@ -598,6 +636,7 @@ public class MemberController {
 
         return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
     }
+
     @PostMapping("{id}/recommendedMajorSubjects")
     public ResponseEntity<Map<String, List<Subject>>> recommendedMajorSubjects(
             @PathVariable String id, @RequestBody Map<String, Object> requestBody) {

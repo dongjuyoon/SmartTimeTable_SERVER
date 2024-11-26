@@ -19,7 +19,13 @@ public interface MemberRepository {
 
     void addCurrentSubject(Member member, Subject subject);
 
-    List<String> addCourse(Member member);
-
     void removeCurrentSubject(Member member,String subjectName);
+
+    List<String> getCurrentMajors(Member member);
+
+    List<String> getCurrentCoreElectives(Member member);
+
+    List<String> getCurrentCommonElectives(Member member);
+
+
 }
