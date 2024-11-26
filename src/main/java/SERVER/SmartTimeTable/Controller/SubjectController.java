@@ -44,6 +44,17 @@ public class SubjectController {
     }
 
     //모든 전공 과목 돌려줌
+    @GetMapping("/allMajors")
+    public ResponseEntity<List<String>> allmajors() {
+        List<String> majors = subjectRepository.getAllMajors();
+
+        if (majors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content
+        }
+        return ResponseEntity.ok(majors);
+    }
+
+    //2학기 전공 과목 돌려줌
     @GetMapping("/majors")
     public ResponseEntity<List<Subject>> majors() {
         List<Subject> majors = subjectRepository.getMajors();
@@ -53,13 +64,13 @@ public class SubjectController {
         }
         return ResponseEntity.ok(majors);
     }
-    //모든 공통교양 과목 돌려줌
+    //공통교양 과목 돌려줌
     @GetMapping("/commonElectives")
     public ResponseEntity<List<Subject>> commonElectives() {
 
         return ResponseEntity.ok(subjectRepository.getCommonElectives());
     }
-    //모든 핵심 과목 돌려줌
+    //핵심 과목 돌려줌
     @GetMapping("/coreElectives")
     public ResponseEntity<List<Subject>> coreElectives() {
 

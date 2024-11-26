@@ -41,7 +41,7 @@ public class MemoryMemberRepository implements MemberRepository {
     public List<Member> findByStudentId_Email_Name(String studentId, String email, String name) {
         List<Member> matchingMembers = new ArrayList<>();
         for (Member member : memberMap.values()) {
-            if (member.getStudentId() == studentId &&
+            if (member.getStudentId().equals(studentId)  &&
                     member.getEmail().equals(email) &&
                     member.getName().equals(name)) {
                 matchingMembers.add(member);
@@ -56,7 +56,7 @@ public class MemoryMemberRepository implements MemberRepository {
         for (Member member : memberMap.values()) {
             if (member.getId().equals(id) &&
                     member.getEmail().equals(email) &&
-                    member.getStudentId() == studentId &&
+                    member.getStudentId().equals(studentId)  &&
                     member.getName().equals(name)) {
                 matchingMembers.add(member);
             }
@@ -76,13 +76,19 @@ public class MemoryMemberRepository implements MemberRepository {
         member.getCurrentSubject().add(subject);
     }
     @Override
-    public List<String> addCourse(Member member) {
-        List<String> allCourses = new ArrayList<>();
-        allCourses.addAll(member.getMajors());
-        allCourses.addAll(member.getCoreElectives());
-        allCourses.addAll(member.getCommonElectives());
-        return allCourses;
+    public List<String> getCurrentMajors(Member member) {
+        return member.getMajors();
     }
+    @Override
+    public List<String> getCurrentCoreElectives(Member member) {
+        return member.getCoreElectives();
+    }
+    @Override
+    public List<String> getCurrentCommonElectives(Member member) {
+        return member.getCommonElectives();
+    }
+
+
 
     @Override
     public void removeCurrentSubject(Member member, String subjectName) {
