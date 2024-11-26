@@ -103,7 +103,7 @@ public class MemorySubjectRepository implements SubjectRepository {
 
 
 
-                        } else if (subjectInfoObj.getName().contains("철학과 인간") || subjectInfoObj.getName().contains("한국근현대사의 이해") || subjectInfoObj.getName().contains("역사와 문명") || subjectInfoObj.getName().contains("4차산업혁명을위한비판적사고") || subjectInfoObj.getName().contains("디지털콘텐츠로 만나는 한국의 문화유산") || subjectInfoObj.getName().contains("세계화와 사회변화") || subjectInfoObj.getName().contains("민주주의와 현대사회") || subjectInfoObj.getName().contains("창업입문") || subjectInfoObj.getName().contains("여성·소수자·공동체") || subjectInfoObj.getName().contains("현대사회와 심리학") || subjectInfoObj.getName().contains("직무수행과 전략적 의사소통") || subjectInfoObj.getName().contains("글로벌문화") || subjectInfoObj.getName().contains("고전으로읽는 인문학") || subjectInfoObj.getName().contains("예술과창조성") || subjectInfoObj.getName().contains("4차산업혁명시대의예술") || subjectInfoObj.getName().contains("문화리터러시와창의적스토리텔링") || subjectInfoObj.getName().contains("디지털문화의 이해") || subjectInfoObj.getName().contains("환경과 인간") || subjectInfoObj.getName().contains("우주,생명,마음") || subjectInfoObj.getName().contains("SW프로그래밍입문") || subjectInfoObj.getName().contains("인공지능의 세계") || subjectInfoObj.getName().contains("4차산업혁명의 이해") || subjectInfoObj.getName().contains("파이썬을활용한데이터분석과인공지능") || subjectInfoObj.getName().contains("외국인학생을위한컴퓨터활용")) {
+                        } else if (subjectInfoObj.getName().contains("철학과인간") || subjectInfoObj.getName().contains("한국근현대사의이해") || subjectInfoObj.getName().contains("역사와문명") || subjectInfoObj.getName().contains("4차산업혁명을위한비판적사고") || subjectInfoObj.getName().contains("디지털콘텐츠로만나는한국의 문화유산") || subjectInfoObj.getName().contains("세계화와 사회변화") || subjectInfoObj.getName().contains("민주주의와 현대사회") || subjectInfoObj.getName().contains("창업입문") || subjectInfoObj.getName().contains("여성·소수자·공동체") || subjectInfoObj.getName().contains("현대사회와 심리학") || subjectInfoObj.getName().contains("직무수행과 전략적 의사소통") || subjectInfoObj.getName().contains("글로벌문화") || subjectInfoObj.getName().contains("고전으로읽는 인문학") || subjectInfoObj.getName().contains("예술과창조성") || subjectInfoObj.getName().contains("4차산업혁명시대의예술") || subjectInfoObj.getName().contains("문화리터러시와창의적스토리텔링") || subjectInfoObj.getName().contains("디지털문화의 이해") || subjectInfoObj.getName().contains("환경과 인간") || subjectInfoObj.getName().contains("우주,생명,마음") || subjectInfoObj.getName().contains("SW프로그래밍입문") || subjectInfoObj.getName().contains("인공지능의 세계") || subjectInfoObj.getName().contains("4차산업혁명의 이해") || subjectInfoObj.getName().contains("파이썬을활용한데이터분석과인공지능") || subjectInfoObj.getName().contains("외국인학생을위한컴퓨터활용")) {
                             coreElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("핵심에 추가");
 
@@ -267,7 +267,7 @@ public class MemorySubjectRepository implements SubjectRepository {
                             subject.equals("시스템프로그래밍") ||
                             subject.equals("프로그래밍언어") ||
                             subject.equals("임베디드시스템") ||
-                            subject.equals("컴퓨터보안");
+                            subject.equals("컴퓨터 보안");
                 }
                 break;
             case "4":

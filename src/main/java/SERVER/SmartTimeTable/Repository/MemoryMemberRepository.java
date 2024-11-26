@@ -41,7 +41,7 @@ public class MemoryMemberRepository implements MemberRepository {
     public List<Member> findByStudentId_Email_Name(String studentId, String email, String name) {
         List<Member> matchingMembers = new ArrayList<>();
         for (Member member : memberMap.values()) {
-            if (member.getStudentId() == studentId &&
+            if (member.getStudentId().equals(studentId) &&
                     member.getEmail().equals(email) &&
                     member.getName().equals(name)) {
                 matchingMembers.add(member);
@@ -56,7 +56,7 @@ public class MemoryMemberRepository implements MemberRepository {
         for (Member member : memberMap.values()) {
             if (member.getId().equals(id) &&
                     member.getEmail().equals(email) &&
-                    member.getStudentId() == studentId &&
+                    member.getStudentId().equals(studentId) &&
                     member.getName().equals(name)) {
                 matchingMembers.add(member);
             }

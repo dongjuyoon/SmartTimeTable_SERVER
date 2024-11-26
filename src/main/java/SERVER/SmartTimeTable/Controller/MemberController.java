@@ -259,33 +259,10 @@ public class MemberController {
     }
     //아이디찾기
     @GetMapping("/findId")
-    public ResponseEntity<String> findId(HttpServletRequest request) {
-
-        StringBuilder jsonBuilder = new StringBuilder();
-        try (BufferedReader reader = request.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("서버 오류: " + e.getMessage());
-        }
-
-        String json = jsonBuilder.toString();
-
-        // JSON 파싱
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> params;
-        try {
-            params = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("잘못된 JSON 형식");
-        }
-
-        String studentId = (String) params.get("student_id");
-        String email = (String) params.get("email");
-        String name = (String) params.get("name");
+    public ResponseEntity<String> findId(
+            @RequestParam("student_id") String studentId,
+            @RequestParam("email") String email,
+            @RequestParam("name") String name) {
 
         List<Member> members = memberRepository.findByStudentId_Email_Name(studentId, email, name);
         if (members.isEmpty()) {
@@ -295,36 +272,13 @@ public class MemberController {
         String userId = members.get(0).getId();
         return ResponseEntity.ok("아이디: " + userId);
     }
-
     //비번찾기
     @GetMapping("/findPassword")
-    public ResponseEntity<String> findPassword(HttpServletRequest request) {
-        StringBuilder jsonBuilder = new StringBuilder();
-        try (BufferedReader reader = request.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("서버 오류: " + e.getMessage());
-        }
-
-        String json = jsonBuilder.toString();
-
-        // JSON 파싱
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> params;
-        try {
-            params = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("잘못된 JSON 형식");
-        }
-
-        String id = (String) params.get("id");
-        String studentId = (String) params.get("student_id");
-        String email = (String) params.get("email");
-        String name = (String) params.get("name");
+    public ResponseEntity<String> findPassword(
+            @RequestParam("id") String id,
+            @RequestParam("student_id") String studentId,
+            @RequestParam("email") String email,
+            @RequestParam("name") String name) {
 
         List<Member> members = memberRepository.findByPassword_FindByPassword_Id_StudentID_Name_Email(id, email, studentId, name);
         if (members.isEmpty()) {
@@ -529,7 +483,7 @@ public class MemberController {
             return ResponseEntity.badRequest().body("잘못된 JSON 형식입니다.");
         }
 
-        // JSON에서 전공, 전공선택, 공통선택 과목 추출
+
         String semester = requestBody.get("semester") != null ? requestBody.get("semester").get(0) : null;
         String grade = requestBody.get("grade") != null ? requestBody.get("grade").get(0) : null;
 
