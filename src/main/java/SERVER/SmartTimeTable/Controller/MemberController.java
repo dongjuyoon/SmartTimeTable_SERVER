@@ -401,7 +401,7 @@ public class MemberController {
         }
 
         return ResponseEntity.ok(memberRepository.getCurrentCommonElectives(member)); // 현재 수강 과목 반환
-    }
+    }ㅁ
 
     //공통,핵심 전공 과목 돌려줌
     @GetMapping("/{id}/completedCourseHistoryManagement2")
