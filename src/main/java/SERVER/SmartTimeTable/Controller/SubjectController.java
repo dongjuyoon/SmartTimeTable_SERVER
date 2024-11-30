@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+        import java.util.List;
 
 @RestController
 @RequestMapping("/subjects")
@@ -45,7 +45,7 @@ public class SubjectController {
 
     //모든 전공 과목 돌려줌
     @GetMapping("/allMajors")
-    public ResponseEntity<List<String>> allmajors() {
+    public ResponseEntity<List<String>> allMajors() {
         List<String> majors = subjectRepository.getAllMajors();
 
         if (majors.isEmpty()) {
@@ -54,7 +54,7 @@ public class SubjectController {
         return ResponseEntity.ok(majors);
     }
 
-    //2학기 전공 과목 돌려줌
+    // 전공 과목 돌려줌
     @GetMapping("/majors")
     public ResponseEntity<List<Subject>> majors() {
         List<Subject> majors = subjectRepository.getMajors();

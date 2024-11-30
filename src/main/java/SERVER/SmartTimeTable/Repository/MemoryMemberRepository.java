@@ -28,7 +28,7 @@ public class MemoryMemberRepository implements MemberRepository {
 
     @Override
     public void save(Member member) {
-        System.out.println("Saving member: " + member.getId() + ", " + member.getEmail() + ", " + member.getStudentId() + ", " + member.getName());
+        System.out.println("Saving member: " + member.getId() + ", " + member.getEmail() + ", " + member.getStudentId() + ", " + member.getName() + member.getCommonElectives()+member.getCoreElectives()+member.getMajors());
         memberMap.put(member.getId(), member);
     }
 
@@ -66,9 +66,7 @@ public class MemoryMemberRepository implements MemberRepository {
 
     @Override
     public void delete(Member member) {
-        if (memberMap.containsKey(member.getId())) {
-            memberMap.remove(member.getId());
-        }
+        memberMap.remove(member.getId());
     }
 
     @Override

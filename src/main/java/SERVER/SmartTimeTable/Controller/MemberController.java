@@ -210,6 +210,9 @@ public class MemberController {
             List<String> commonElectives = requestBody.get("commonElectives");
             member.setCoreElectives(coreElectives);
             member.setCommonElectives(commonElectives);
+
+            memberRepository.save(member);
+            System.out.println("공통,핵심 저장완료");
             return ResponseEntity.ok("회원가입 성공");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류 발생: " + e.getMessage());
@@ -357,13 +360,16 @@ public class MemberController {
     // 회원탈퇴
     @DeleteMapping("/{id}/withdrawalOfMembership")
     public ResponseEntity<String> WithdrawalOfMembership(@PathVariable String id) {
+
         Member member = memberRepository.findById(id);
 
         if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원이 존재하지 않습니다.");
         }
+        System.out.println("아이디"+member.getId());
 
         memberRepository.delete(member); // 회원 탈퇴 처리
+        System.out.println("정상적으로 회원탈퇴 되었습니다");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content 응답
     }
 
@@ -388,10 +394,11 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(memberRepository.getCurrentCoreElectives(member)); // 현재 수강 과목 반환
+        System.out.println("이수한 핵심교양과목이 조회되었습니다");
+        return ResponseEntity.ok(member.getCoreElectives()); // 현재 수강 과목 반환
     }
 
-    // 수강했던 공통 교양 과목 조회
+    //수강했던 공통 교양 과목 조회
     @GetMapping("/{id}/completedCourseHistoryManagementCommon")
     public ResponseEntity<List<String>> completedCourseHistoryManagementCommon(@PathVariable String id) {
         Member member = memberRepository.findById(id);
@@ -399,24 +406,25 @@ public class MemberController {
         if (member == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+        System.out.println("이수한 공통교양과목이 조회되었습니다");
 
-        return ResponseEntity.ok(memberRepository.getCurrentCommonElectives(member)); // 현재 수강 과목 반환
+
+        return ResponseEntity.ok(member.getCommonElectives()); // 현재 수강 과목 반환
     }
 
-    //공통,핵심 전공 과목 돌려줌
-    @GetMapping("/{id}/completedCourseHistoryManagement2")
-    public ResponseEntity<List<Subject>> completedCourseHistoryManagement2(@PathVariable String id) {
-        Member member = memberRepository.findById(id);
-
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        List<Subject> allElectives = subjectRepository.getAllElectives();
-
-        return ResponseEntity.ok(allElectives);
-    }
+//    //공통,핵심 전공 과목 돌려줌통
+//    public ResponseEntity<List<Subject>> completedCourseHistoryManagement2(@PathVariable String id) {
+//        Member member = memberRepository.findById(id);
+//
+//
+//        if (member == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//
+//        List<Subject> allElectives = subjectRepository.getAllElectives();
+//
+//        return ResponseEntity.ok(allElectives);
+//    }
 
     //특정강의를 멤버에 추가
     @PostMapping("/{id}/addToMember")

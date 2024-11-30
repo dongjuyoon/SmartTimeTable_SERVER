@@ -38,10 +38,6 @@ public class MemorySubjectRepository implements SubjectRepository {
         return subjectMap.get(lectureNumber);
     }
 
-    @Override
-    public Subject findByProfessor(String professor) {
-        return subjectMap.get(professor);
-    }
 
     @Override
     public void save(Subject subject) {
@@ -173,15 +169,9 @@ public class MemorySubjectRepository implements SubjectRepository {
         subjectMap.put(subject.getName(), subject);
     }
 
-    @Override
-    public void updateSubject(String name, Subject updatedSubject) {
-        subjectMap.put(name, updatedSubject);
-    }
 
-    @Override
-    public void deleteSubject(String name) {
-        subjectMap.remove(name);
-    }
+
+
 
     @Override
     public List<Subject> findAll() {

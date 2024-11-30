@@ -14,8 +14,6 @@ public interface SubjectRepository {
 
     Subject findByLectureNumber(String lectureNumber);
 
-    Subject findByProfessor(String professor);
-
     void save(Subject subject);
 
 /*
@@ -30,8 +28,6 @@ public interface SubjectRepository {
     void addRecommendedSubject(String subject, Map<String, List<Subject>> recommendedSubjectsMap);
     Map<String, List<String>> getCoursePrerequisites();
     void recommendSubjectsByGradeAndSemester(String grade, String semester, String subject, List<String> enrolledMajorElectives, Map<String, List<Subject>> recommendedSubjectsMap);
-    void updateSubject(String name, Subject updatedSubject);
-    void deleteSubject(String name);
     List<Subject> getCoreElectives();
     List<Subject> getMajors();
     List<Subject> getCommonElectives();
