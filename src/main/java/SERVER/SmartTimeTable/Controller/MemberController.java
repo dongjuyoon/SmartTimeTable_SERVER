@@ -36,6 +36,12 @@ public class MemberController {
         this.subjectRepository = subjectRepository;
     }
 
+    private ResponseEntity<String> saveMember(Member member) {
+        memberRepository.save(member);
+        System.out.println("Saving member: " + member.getId() + ", " + member.getEmail() + ", " + member.getStudentId() + ", " + member.getName() + ", " + member.getPassword()+", " + member.getCommonElectives()+", " + member.getCoreElectives()+", " + member.getMajors()+", " + member.getMajor());
+        return ResponseEntity.status(HttpStatus.CREATED).body("정보 저장 완료");
+    }
+
     // 아이디 중복 체크 메소드
     @GetMapping("/checkId")
     public ResponseEntity<String> checkId(@RequestParam String id) {

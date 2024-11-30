@@ -30,7 +30,7 @@ public class SubjectController {
         return subjectRepository.findAll();
     }
 
-    //전체과목 돌려줌 돌려줌 다 수정해야함
+    //전체과목 돌려줌 돌려줌
     @GetMapping("/allReturnSubjects")
     public ResponseEntity<List<Subject>> allReturnSubjects(@PathVariable String id) {
         Member member = memberRepository.findById(id);
