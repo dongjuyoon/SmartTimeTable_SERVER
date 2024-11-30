@@ -388,7 +388,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        return ResponseEntity.ok(memberRepository.getCurrentCoreElectives(member)); // 현재 수강 과목 반환
+        return ResponseEntity.ok(memberRepository.getCurrentCoreElectives(member)+memberRepository.getCurrentCommonElectives(member)); // 현재 수강 과목 반환
     }
 
     // 수강했던 공통 교양 과목 조회
