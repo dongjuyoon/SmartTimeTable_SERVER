@@ -315,53 +315,50 @@ public class MemberController {
 
     //학생 시간표 삭제
     @DeleteMapping("/{id}/delete-current-subject")
-    public ResponseEntity<List<Subject>> deleteCurrentSubject(@PathVariable String id,
-                                                              HttpServletRequest request) {
-
+    public ResponseEntity<String> deleteCurrentSubject(@PathVariable String id,
+                                                       HttpServletRequest request) {
         StringBuilder jsonBuilder = new StringBuilder();
+
+        // 요청 본문 읽기
         try (BufferedReader reader = request.getReader()) {
             String line;
             while ((line = reader.readLine()) != null) {
                 jsonBuilder.append(line);
             }
         } catch (IOException e) {
-            e.printStackTrace(); // 예외 로그 추가
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null);
+            // 요청 본문을 읽는 중 오류 발생
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
         }
 
         String json = jsonBuilder.toString();
-
-        // JSON 파싱
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> params;
+
+        // JSON 형식 파싱
         try {
             params = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {});
         } catch (IOException e) {
-            e.printStackTrace(); // 예외 로그 추가
-            return ResponseEntity.badRequest().body(null);
+            // JSON 파싱 오류 발생
+            return ResponseEntity.badRequest().body("유효하지 않은 JSON 형식");
         }
 
-        // 과목 이름을 List<String>으로 처리
-        String subjectNames = (String) params.get("subjectName");
-
-        if (subjectNames == null || subjectNames.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+        String subjectName = (String) params.get("subjectName");
+        if (subjectName == null || subjectName.isEmpty()) {
+            return ResponseEntity.badRequest().body("과목 이름이 필요합니다.");
         }
 
         Member member = memberRepository.findById(id);
         if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
         }
 
-        // 과목 삭제 메소드 호출
-        memberRepository.removeCurrentSubject(member, subjectNames); // 과목 삭제
-        memberRepository.save(member); // 업데이트된 멤버 객체 저장
+        // 과목 삭제
+        memberRepository.removeCurrentSubject(member, subjectName);
+        memberRepository.save(member);
 
-        // 삭제 후 남아있는 현재 수강 과목 반환
-        List<Subject> currentSubjects = member.getCurrentSubject();
-        return ResponseEntity.ok(currentSubjects);
+        return ResponseEntity.ok("과목 '" + subjectName + "'가 시간표에서 삭제되었습니다.");
     }
+
 
     // 회원탈퇴
     @DeleteMapping("/{id}/withdrawalOfMembership")
@@ -653,12 +650,7 @@ public class MemberController {
 
     @PostMapping("{id}/recommendedMajorSubjects")
     public ResponseEntity<Map<String, List<Subject>>> recommendedMajorSubjects(
-            @PathVariable String id, @RequestBody Map<String, Object> requestBody) {
-
-        // 요청 본문에서 전공, 학년, 학기 추출
-        List<String> majors = (List<String>) requestBody.get("majors");
-        String grade = (String) requestBody.get("grade"); // 학년
-        String semester = (String) requestBody.get("semester"); // 학기
+            @PathVariable String id) {
 
         // 회원 조회
         Member member = memberRepository.findById(id);
@@ -666,7 +658,10 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        List<String> enrolledMajorElectives = member.getMajors();
+        String grade = member.getGrade(); // 학년
+        String semester = member.getSemester(); // 학기
+
+        List<String> enrolledMajorElectives = member.getMajors(); // 이수 전공 과목 조회
         Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
 
         // 과목과 선이수 과목 정의
@@ -682,38 +677,42 @@ public class MemberController {
             // 학년 및 학기에 따른 추천 과목 추가
             subjectRepository.recommendSubjectsByGradeAndSemester(grade, semester, subject, enrolledMajorElectives, recommendedSubjectsMap);
         }
+        System.out.println(recommendedSubjectsMap);
 
         // 추천 과목이 없으면 빈 리스트로 반환
         if (recommendedSubjectsMap.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.emptyMap());
         }
 
+
         // 추천 과목 반환
         return ResponseEntity.ok(recommendedSubjectsMap);
     }
 
 
-
-    @PostMapping("{id}/recommendedCoreSubjects")
-    public ResponseEntity<Map<String, List<Subject>>> recommendedCoreSubjects(@PathVariable String id) {
-        // 회원 조회
-        Member member = memberRepository.findById(id);
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        // SubjectRepository에서 추천 과목 조회
-        Map<String, List<Subject>> recommendedSubjects = subjectRepository.findRecommendedCoreSubjects(member);
-
-        // 추천 과목이 없으면 NO_CONTENT 상태 반환
-        if (recommendedSubjects.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-
-        // 추천 과목 반환
-        return ResponseEntity.ok(recommendedSubjects);
+// 추천 핵심
+@PostMapping("{id}/recommendedCoreSubjects")
+public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String id) {
+    // 회원 조회
+    Member member = memberRepository.findById(id);
+    if (member == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
+    // SubjectRepository에서 추천 과목 조회
+    List<String> recommendedSubjects = subjectRepository.findRecommendedCoreSubjects(member);
+    System.out.println(recommendedSubjects);
+
+    // 추천 과목이 없으면 NO_CONTENT 상태 반환
+    if (recommendedSubjects.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    // 추천 과목 반환
+    return ResponseEntity.ok(recommendedSubjects);
+}
+
+    //추천 공통 과목
     @PostMapping("{id}/recommendedCommonSubjects")
     public ResponseEntity<List<String>> recommendedCommonSubjects(@PathVariable String id) {
         // 회원 조회
@@ -724,7 +723,7 @@ public class MemberController {
 
         // SubjectRepository에서 추천 과목 조회
         List<String> recommendedSubjects = subjectRepository.findRecommendedCommonSubjects(member);
-
+        System.out.println(recommendedSubjects);
         // 추천 과목이 없으면 NO_CONTENT 상태로 응답
         if (recommendedSubjects.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

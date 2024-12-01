@@ -32,7 +32,7 @@ public interface SubjectRepository {
     List<Subject> getMajors();
     List<Subject> getCommonElectives();
     List<Subject> getAllElectives();
-    Map<String, List<Subject>> findRecommendedCoreSubjects(Member member);
+    List<String> findRecommendedCoreSubjects(Member member);
     List<String> findRecommendedCommonSubjects(Member member);
 
     List<String> getAllMajors();

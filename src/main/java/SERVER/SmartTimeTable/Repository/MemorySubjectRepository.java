@@ -322,7 +322,7 @@ public class MemorySubjectRepository implements SubjectRepository {
         recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).add(subjectEntity);
     }
 
-    public Map<String, List<Subject>> findRecommendedCoreSubjects(Member member) {
+    public List<String> findRecommendedCoreSubjects(Member member) {
         // 수강 중인 과목 리스트
         List<String> enrolledCoreElectives = member.getCoreElectives();
 
@@ -334,8 +334,8 @@ public class MemorySubjectRepository implements SubjectRepository {
                 List.of("환경과인간", "우주,생명,마음", "SW프로그래밍입문", "인공지능의세계", "4차산업혁명의이해", "파이썬을활용한데이터분석과인공지능")
         );
 
-        // 추천 과목 맵 초기화
-        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
+        // 추천 과목 리스트 초기화
+        List<String> recommendedSubjectsList = new ArrayList<>();
 
         // 추천 과목 리스트 초기화
         for (List<String> subjectList : allRecommendedSubjects) {
@@ -345,22 +345,17 @@ public class MemorySubjectRepository implements SubjectRepository {
             }
 
             // 해당 그룹의 추천 과목을 찾기
-            List<Subject> subjects = new ArrayList<>();
             for (String subjectName : subjectList) {
                 Subject subject = findByName(subjectName); // findByName 호출
                 if (subject != null) {
-                    subjects.add(subject);
+                    recommendedSubjectsList.add(subjectName); // 과목 이름을 추가
                 }
-            }
-
-            // 추천 과목이 있는 경우 추가
-            if (!subjects.isEmpty()) {
-                recommendedSubjectsMap.put(subjectList.toString(), subjects);
             }
         }
 
-        return recommendedSubjectsMap;
+        return recommendedSubjectsList; // List<String> 반환
     }
+
     public List<String> findRecommendedCommonSubjects(Member member) {
         List<String> enrolledCommonElectives = member.getCommonElectives();
 

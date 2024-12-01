@@ -32,14 +32,7 @@ public class SubjectController {
 
     //전체과목 돌려줌 돌려줌
     @GetMapping("/allReturnSubjects")
-    public ResponseEntity<List<Subject>> allReturnSubjects(@PathVariable String id) {
-        Member member = memberRepository.findById(id);
-
-
-        if (member == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
+    public ResponseEntity<List<Subject>> allReturnSubjects() {
         return ResponseEntity.ok(subjectRepository.findAll());
     }
 
