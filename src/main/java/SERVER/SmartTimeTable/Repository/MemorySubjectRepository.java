@@ -15,11 +15,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class MemorySubjectRepository implements SubjectRepository {
 
     private final Map<String, Subject> subjectMap = new HashMap<>();
+    private final Map<String, Subject> subjectMap2 = new HashMap<>();
+    private final Map<String, Subject> subjectMap3 = new HashMap<>();
     private final Map<String, Subject> majorsMap = new HashMap<>();
     private final Map<String, Subject> coreElectivesMap = new HashMap<>();
     private final Map<String, Subject> commonElectivesMap = new HashMap<>();
@@ -27,21 +30,64 @@ public class MemorySubjectRepository implements SubjectRepository {
 
 
 
-
+    //괄호 제거 이름으로 찾기
     @Override
-    public Subject findByName(String name) {
-        return subjectMap.get(name);
+    public List<Subject> findByName(String name) {
+        System.out.println("찾고 있는 과목 이름: " + name);
+
+        // 현재 과목 목록 출력
+        System.out.println("현재 과목 목록: " + subjectMap3.keySet());
+
+        List<Subject> foundSubjects = new ArrayList<>(); // 찾은 과목 리스트
+
+        // 키를 검색하여 name이 포함된 과목 찾기
+        for (String key : subjectMap3.keySet()) {
+            if (key.contains(name)) {
+                Subject foundSubject = subjectMap3.get(key);
+                if (foundSubject != null) {
+                    foundSubjects.add(foundSubject); // 찾은 과목을 리스트에 추가
+                    System.out.println("찾은 과목: " + foundSubject.getName() + " (키: " + key + ")");
+                }
+            }
+        }
+
+        if (foundSubjects.isEmpty()) {
+            System.out.println("과목을 찾지 못했습니다: " + name);
+        }
+
+        return foundSubjects; // 찾은 과목 리스트 반환
     }
 
+
+    //일반 이름으로 찾기
     @Override
-    public Subject findByLectureNumber(String lectureNumber) {
-        return subjectMap.get(lectureNumber);
+    public Subject findByName2(String name){
+        return subjectMap3.get(name);
     }
+
 
 
     @Override
     public void save(Subject subject) {
         subjectMap.put(subject.getLectureNumber(), subject); // 강좌번호를 키로 사용
+
+        String normalizedName = normalizeName(subject.getName());
+        String key = normalizedName;
+        int index = 1;
+
+        // 같은 키가 이미 존재하는 경우 인덱스를 추가하여 새로운 키 생성
+        while (subjectMap2.containsKey(key)) {
+            key = normalizedName + "_" + index; // 예: "과목명_1", "과목명_2" 형태로 키 생성
+            index++;
+        }
+
+        subjectMap2.put(key, subject); // 괄호제거된 새로운 키로 과목 저장
+
+        subjectMap3.put(subject.getName(), subject); //일반 이름을 키로 사용
+    }
+
+    private String normalizeName(String name) {
+        return name.replaceAll("\\s*\\(.*?\\)", "").trim(); // 괄호 및 그 안의 내용 제거
     }
 
     @PostConstruct
@@ -88,7 +134,7 @@ public class MemorySubjectRepository implements SubjectRepository {
                         System.out.println(subjectInfoObj.getName());
                         System.out.println(subjectInfoObj.getProfessor());
 
-                          save(subjectInfoObj); // 과목 저장
+                        save(subjectInfoObj); // 과목 저장
 
                         if (subjectInfoObj.getName().contains("JEJ")) {
                             majorsMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
@@ -100,7 +146,7 @@ public class MemorySubjectRepository implements SubjectRepository {
                         } else if (subjectInfoObj.getName().contains("채플") || subjectInfoObj.getName().contains("성서와인간이해") || subjectInfoObj.getName().contains("현대사회와기독교윤리") || subjectInfoObj.getName().contains("종교와과학") || subjectInfoObj.getName().contains("기독교와문화") || subjectInfoObj.getName().contains("글쓰기") || subjectInfoObj.getName().contains("발표와토의") || subjectInfoObj.getName().contains("영어1") || subjectInfoObj.getName().contains("영어2") || subjectInfoObj.getName().contains("영어3") || subjectInfoObj.getName().contains("영어4") || subjectInfoObj.getName().contains("영어회화1") || subjectInfoObj.getName().contains("영어회화2") || subjectInfoObj.getName().contains("영어회화3") || subjectInfoObj.getName().contains("영어회화4") || subjectInfoObj.getName().contains("4차산업혁명과미래사회진로선택") || subjectInfoObj.getName().contains("디지털리터리시의이해")) {
                             commonElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("공통에 추가");
-                    }
+                        }
                         allMajors.add("C언어프로그래밍");
                         allMajors.add("공학입문설계");
                         allMajors.add("객체지향프로그래밍1");
@@ -138,15 +184,15 @@ public class MemorySubjectRepository implements SubjectRepository {
                     }
                 }
 
-                    try {
-                        if (currentPage < 338) {
-                            if (currentPage % 10 != 0) {
-                                WebElement pageLink = driver.findElement(By.xpath("//a[contains(@href, \"javascript:listPage('" + (currentPage * 10 + 1) + "')\")]"));
-                                pageLink.click();
-                            } else {
-                                WebElement nextPageLink = driver.findElement(By.cssSelector("span.next a"));
-                                nextPageLink.click();
-                            }
+                try {
+                    if (currentPage < 338) {
+                        if (currentPage % 10 != 0) {
+                            WebElement pageLink = driver.findElement(By.xpath("//a[contains(@href, \"javascript:listPage('" + (currentPage * 10 + 1) + "')\")]"));
+                            pageLink.click();
+                        } else {
+                            WebElement nextPageLink = driver.findElement(By.cssSelector("span.next a"));
+                            nextPageLink.click();
+                        }
 
                         currentPage++;
                         wait.until(ExpectedConditions.stalenessOf(elements.get(0)));
@@ -165,9 +211,7 @@ public class MemorySubjectRepository implements SubjectRepository {
             driver.quit(); // 드라이버 종료
         }
     }
-    public void addSubject(Subject subject) {
-        subjectMap.put(subject.getName(), subject);
-    }
+
 
 
 
@@ -246,6 +290,7 @@ public class MemorySubjectRepository implements SubjectRepository {
     public void recommendSubjectsByGradeAndSemester(String grade, String semester, String subject,
                                                     List<String> enrolledMajorElectives,
                                                     Map<String, List<Subject>> recommendedSubjectsMap) {
+
         if (isSubjectRecommendedForSemester(subject, grade, semester, enrolledMajorElectives)) {
             addRecommendedSubject(subject, recommendedSubjectsMap);
         }
@@ -310,19 +355,20 @@ public class MemorySubjectRepository implements SubjectRepository {
     }
 
     // 추천 과목을 추가하는 메서드
-    @Override
-    public void addRecommendedSubject(String subject, Map<String, List<Subject>> recommendedSubjectsMap) {
+    public void addRecommendedSubject(String subjectName, Map<String, List<Subject>> recommendedSubjectsMap) {
+        List<Subject> subjectEntities = findByName(subjectName); // subjectMap에서 과목 리스트 찾기
 
-        Subject subjectEntity = findByName(subject); // findByName 메서드 사용
-
-        if (subjectEntity == null) {
-            System.out.println("과목이 존재하지 않습니다");
+        if (subjectEntities.isEmpty()) {
+            System.out.println("과목이 존재하지 않습니다: " + subjectName);
             return;
         }
-        recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).add(subjectEntity);
-    }
 
-    public List<String> findRecommendedCoreSubjects(Member member) {
+        // 추천 과목에 추가
+        recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).addAll(subjectEntities);
+    }
+    
+
+    public Map<String, List<Subject>> findRecommendedCoreSubjects(Member member) {
         // 수강 중인 과목 리스트
         List<String> enrolledCoreElectives = member.getCoreElectives();
 
@@ -334,30 +380,34 @@ public class MemorySubjectRepository implements SubjectRepository {
                 List.of("환경과인간", "우주,생명,마음", "SW프로그래밍입문", "인공지능의세계", "4차산업혁명의이해", "파이썬을활용한데이터분석과인공지능")
         );
 
-        // 추천 과목 리스트 초기화
-        List<String> recommendedSubjectsList = new ArrayList<>();
+        // 추천 과목 맵 초기화
+        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
 
-        // 추천 과목 리스트 초기화
+        // 추천 과목 그룹 순회
         for (List<String> subjectList : allRecommendedSubjects) {
-            // 해당 그룹에 수강 중인 과목이 포함되어 있으면 전체 그룹 제외
-            if (enrolledCoreElectives.stream().anyMatch(subjectList::contains)) {
-                continue; // 이 그룹의 과목은 추천하지 않음
-            }
+            // 해당 그룹에 수강 중인 과목이 포함되어 있는지 체크
+            boolean hasEnrolledSubject = enrolledCoreElectives.stream().anyMatch(subjectList::contains);
 
-            // 해당 그룹의 추천 과목을 찾기
-            for (String subjectName : subjectList) {
-                Subject subject = findByName(subjectName); // findByName 호출
-                if (subject != null) {
-                    recommendedSubjectsList.add(subjectName); // 과목 이름을 추가
-                }
+            // 수강 중인 과목이 없을 경우 전체 그룹 추천
+            if (!hasEnrolledSubject) {
+                List<Subject> foundSubjects = subjectList.stream()
+                        .flatMap(subjectName -> findByName(subjectName).stream()) // 과목 이름으로 Subject 객체 찾기
+                        .filter(Objects::nonNull) // null이 아닌 과목만 필터링
+                        .toList(); // Java 16 이상에서 사용 가능
+
+                // 추천 과목 그룹 추가
+                recommendedSubjectsMap.put("추천 과목: " + subjectList.get(0), foundSubjects);
             }
         }
 
-        return recommendedSubjectsList; // List<String> 반환
+        return recommendedSubjectsMap; // 최종 추천 과목 맵 반환
     }
 
-    public List<String> findRecommendedCommonSubjects(Member member) {
+
+    public Map<String, List<Subject>> findRecommendedCommonSubjects(Member member) {
         List<String> enrolledCommonElectives = member.getCommonElectives();
+        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
+        List<String> recommendedSubjects = new ArrayList<>();
 
         // 추천 과목군들
         List<List<String>> allRecommendedSubjects = List.of(
@@ -367,8 +417,6 @@ public class MemorySubjectRepository implements SubjectRepository {
                 List.of("영어회화1", "영어회화2", "영어회화3", "영어회화4"),
                 List.of("4차산업혁명과미래사회진로선택", "디지털리터리시의이해")
         );
-
-        List<String> recommendedSubjects = new ArrayList<>();
 
         // 1. 첫 번째 그룹 처리
         List<String> subjectGroup1 = allRecommendedSubjects.get(0);
@@ -423,6 +471,14 @@ public class MemorySubjectRepository implements SubjectRepository {
             recommendedSubjects.addAll(subjectGroup7);
         }
 
-        return recommendedSubjects;
+        // Subject 객체로 변환
+        for (String subjectName : recommendedSubjects) {
+            List<Subject> subject = findByName(subjectName);
+            if (subject != null) {
+                recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).addAll(subject);
+            }
+        }
+
+        return recommendedSubjectsMap;
     }
 }

@@ -458,11 +458,11 @@ public class MemberController {
         }
 
         // JSON에서 lectureNumber 추출
-        String lectureNumber = requestBody.get("lectureNumber");
+        String name = requestBody.get("name");
 
         // 회원 및 과목 조회
         Member member = memberRepository.findById(id);
-        Subject subject = subjectRepository.findByLectureNumber(lectureNumber);
+        Subject subject = subjectRepository.findByName2(name);
 
         // 회원이 존재하지 않는 경우 처리
         if (member == null) {
@@ -648,6 +648,7 @@ public class MemberController {
         return ResponseEntity.ok("과목 정보가 성공적으로 저장되었습니다.");
     }
 
+    //추천 전공
     @PostMapping("{id}/recommendedMajorSubjects")
     public ResponseEntity<Map<String, List<Subject>>> recommendedMajorSubjects(
             @PathVariable String id) {
@@ -661,6 +662,7 @@ public class MemberController {
         String grade = member.getGrade(); // 학년
         String semester = member.getSemester(); // 학기
 
+        System.out.println(member.getMajors());
         List<String> enrolledMajorElectives = member.getMajors(); // 이수 전공 과목 조회
         Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
 
@@ -689,32 +691,9 @@ public class MemberController {
         return ResponseEntity.ok(recommendedSubjectsMap);
     }
 
-
-// 추천 핵심
-@PostMapping("{id}/recommendedCoreSubjects")
-public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String id) {
-    // 회원 조회
-    Member member = memberRepository.findById(id);
-    if (member == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-
-    // SubjectRepository에서 추천 과목 조회
-    List<String> recommendedSubjects = subjectRepository.findRecommendedCoreSubjects(member);
-    System.out.println(recommendedSubjects);
-
-    // 추천 과목이 없으면 NO_CONTENT 상태 반환
-    if (recommendedSubjects.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    // 추천 과목 반환
-    return ResponseEntity.ok(recommendedSubjects);
-}
-
-    //추천 공통 과목
-    @PostMapping("{id}/recommendedCommonSubjects")
-    public ResponseEntity<List<String>> recommendedCommonSubjects(@PathVariable String id) {
+//추천 핵심
+    @PostMapping("{id}/recommendedCoreSubjects")
+    public ResponseEntity<Map<String, List<Subject>>> recommendedCoreSubjects(@PathVariable String id) {
         // 회원 조회
         Member member = memberRepository.findById(id);
         if (member == null) {
@@ -722,18 +701,37 @@ public ResponseEntity<List<String>> recommendedCoreSubjects(@PathVariable String
         }
 
         // SubjectRepository에서 추천 과목 조회
-        List<String> recommendedSubjects = subjectRepository.findRecommendedCommonSubjects(member);
+        Map<String, List<Subject>> recommendedSubjects = subjectRepository.findRecommendedCoreSubjects(member);
         System.out.println(recommendedSubjects);
-        // 추천 과목이 없으면 NO_CONTENT 상태로 응답
-        if (recommendedSubjects.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+
+        // 추천 과목이 없으면 NO_CONTENT 상태 반환
+        if (recommendedSubjects == null || recommendedSubjects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
 
         // 추천 과목 반환
         return ResponseEntity.ok(recommendedSubjects);
     }
 
+    //추천 공통
+    @PostMapping("{id}/recommendedCommonSubjects")
+    public ResponseEntity<Map<String, List<Subject>>> recommendedCommonSubjects(@PathVariable String id) {
+        // 회원 조회
+        Member member = memberRepository.findById(id);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
 
+        // SubjectRepository에서 추천 과목 조회
+        Map<String, List<Subject>> recommendedSubjects = subjectRepository.findRecommendedCommonSubjects(member);
+        System.out.println(recommendedSubjects);
 
+        // 추천 과목이 없으면 NO_CONTENT 상태로 응답
+        if (recommendedSubjects == null || recommendedSubjects.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+        // 추천 과목 반환
+        return ResponseEntity.ok(recommendedSubjects);
+    }
 }
-

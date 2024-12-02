@@ -10,15 +10,12 @@ import java.util.Map;
 public interface SubjectRepository {
     final Map<String, Subject> memberMap = new HashMap<>();
 
-    Subject findByName(String name);
-
-    Subject findByLectureNumber(String lectureNumber);
-
+    List<Subject> findByName(String name);
     void save(Subject subject);
 
-/*
-    void fetchCourseData();
-*/
+    /*
+        void fetchCourseData();
+    */
     /*
         void addSubject(String name, String classTime, String professor, String lectureNumber, String dayWeek);
     */
@@ -32,8 +29,9 @@ public interface SubjectRepository {
     List<Subject> getMajors();
     List<Subject> getCommonElectives();
     List<Subject> getAllElectives();
-    List<String> findRecommendedCoreSubjects(Member member);
-    List<String> findRecommendedCommonSubjects(Member member);
+    Map<String, List<Subject>> findRecommendedCoreSubjects(Member member);
+    Map<String, List<Subject>> findRecommendedCommonSubjects(Member member);
 
+    Subject findByName2(String name);
     List<String> getAllMajors();
 }
