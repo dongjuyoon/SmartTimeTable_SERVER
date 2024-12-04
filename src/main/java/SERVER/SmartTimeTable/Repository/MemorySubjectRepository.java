@@ -40,9 +40,10 @@ public class MemorySubjectRepository implements SubjectRepository {
 
         List<Subject> foundSubjects = new ArrayList<>(); // 찾은 과목 리스트
 
-        // 키를 검색하여 name이 포함된 과목 찾기
+        // 정확히 name이 일치하는 과목 찾기
         for (String key : subjectMap3.keySet()) {
-            if (key.contains(name)) {
+            // 키가 정확히 name과 일치하는지 확인
+            if (key.startsWith(name + "(") && key.endsWith(")")) {
                 Subject foundSubject = subjectMap3.get(key);
                 if (foundSubject != null) {
                     foundSubjects.add(foundSubject); // 찾은 과목을 리스트에 추가
@@ -57,6 +58,7 @@ public class MemorySubjectRepository implements SubjectRepository {
 
         return foundSubjects; // 찾은 과목 리스트 반환
     }
+
 
 
     //일반 이름으로 찾기
@@ -143,8 +145,7 @@ public class MemorySubjectRepository implements SubjectRepository {
                         } else if (subjectInfoObj.getName().contains("철학과인간") || subjectInfoObj.getName().contains("한국근현대사의이해") || subjectInfoObj.getName().contains("역사와문명") || subjectInfoObj.getName().contains("4차산업혁명을위한비판적사고") || subjectInfoObj.getName().contains("디지털콘텐츠로만나는한국의문화유산") || subjectInfoObj.getName().contains("세계화와사회변화") || subjectInfoObj.getName().contains("민주주의와현대사회") || subjectInfoObj.getName().contains("창업입문") || subjectInfoObj.getName().contains("여성·소수자·공동체") || subjectInfoObj.getName().contains("현대사회와심리학") || subjectInfoObj.getName().contains("직무수행과전략적의사소통") || subjectInfoObj.getName().contains("글로벌문화") || subjectInfoObj.getName().contains("고전으로읽는인문학") || subjectInfoObj.getName().contains("예술과창조성") || subjectInfoObj.getName().contains("4차산업혁명시대의예술") || subjectInfoObj.getName().contains("문화리터러시와창의적스토리텔링") || subjectInfoObj.getName().contains("디지털문화의이해") || subjectInfoObj.getName().contains("환경과인간") || subjectInfoObj.getName().contains("우주,생명,마음") || subjectInfoObj.getName().contains("SW프로그래밍입문") || subjectInfoObj.getName().contains("인공지능의세계") || subjectInfoObj.getName().contains("4차산업혁명의이해") || subjectInfoObj.getName().contains("파이썬을활용한데이터분석과인공지능") || subjectInfoObj.getName().contains("외국인학생을위한컴퓨터활용")) {
                             coreElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("핵심에 추가");
-                        } else if (subjectInfoObj.getName().contains("채플") || subjectInfoObj.getName().contains("성서와인간이해") || subjectInfoObj.getName().contains("현대사회와기독교윤리") || subjectInfoObj.getName().contains("종교와과학") || subjectInfoObj.getName().contains("기독교와문화") || subjectInfoObj.getName().contains("글쓰기") || subjectInfoObj.getName().contains("발표와토의") || subjectInfoObj.getName().contains("영어1") || subjectInfoObj.getName().contains("영어2") || subjectInfoObj.getName().contains("영어3") || subjectInfoObj.getName().contains("영어4") || subjectInfoObj.getName().contains("영어회화1") || subjectInfoObj.getName().contains("영어회화2") || subjectInfoObj.getName().contains("영어회화3") || subjectInfoObj.getName().contains("영어회화4") || subjectInfoObj.getName().contains("4차산업혁명과미래사회진로선택") || subjectInfoObj.getName().contains("디지털리터리시의이해")) {
-                            commonElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
+                        } else if (subjectInfoObj.getName().contains("채플") || subjectInfoObj.getName().contains("성서와인간이해") || subjectInfoObj.getName().contains("현대사회와기독교윤리") || subjectInfoObj.getName().contains("종교와과학") || subjectInfoObj.getName().contains("기독교와문화") || subjectInfoObj.getName().equals("글쓰기") || subjectInfoObj.getName().contains("발표와토의") || subjectInfoObj.getName().contains("영어1") || subjectInfoObj.getName().contains("영어2") || subjectInfoObj.getName().contains("영어3") || subjectInfoObj.getName().contains("영어4") || subjectInfoObj.getName().contains("영어회화1") || subjectInfoObj.getName().contains("영어회화2") || subjectInfoObj.getName().contains("영어회화3") || subjectInfoObj.getName().contains("영어회화4") || subjectInfoObj.getName().contains("4차산업혁명과미래사회진로선택") || subjectInfoObj.getName().contains("디지털리터러시의이해")) {                            commonElectivesMap.put(subjectInfoObj.getLectureNumber(), subjectInfoObj);
                             System.out.println("공통에 추가");
                         }
                         allMajors.add("C언어프로그래밍");
@@ -252,108 +253,249 @@ public class MemorySubjectRepository implements SubjectRepository {
         return allElectives;
     }
 
-    // 과목의 선이수 조건을 정의하고 반환하는 메서드
-    @Override
-    public Map<String, List<String>> getCoursePrerequisites() {
-        return new HashMap<>() {{
-            put("자료구조", Collections.singletonList("C언어프로그래밍"));
-            put("객체지향프로그래밍1", Collections.singletonList("C언어프로그래밍"));
-            put("객체지향프로그래밍2", Collections.singletonList("객체지향프로그래밍1"));
-            put("알고리즘", Collections.singletonList("자료구조"));
-            put("고급객체지향프로그래밍", Collections.singletonList("객체지향프로그래밍2"));
-            put("팀프로젝트1", Collections.singletonList("공학입문설계"));
-            put("컴퓨터하드웨어", Collections.singletonList("공학입문설계"));
-            put("시스템분석 및 설계", Collections.singletonList("공학입문설계"));
-            put("임베디드시스템", Arrays.asList("컴퓨터하드웨어", "공개SW실무"));
-            put("캡스톤디자인", Collections.singletonList("소프트웨어공학"));
-            put("컴퓨터아키텍처", Collections.singletonList("컴퓨터하드웨어"));
-            put("컴퓨터네트워크", Collections.singletonList("컴퓨터하드웨어"));
-            put("데이터베이스설계", Collections.singletonList("데이터베이스"));
-        }};
-    }
 
-    // 선이수 과목을 추천하는 메서드
+
     @Override
-    public void recommendPrerequisites(List<String> enrolledMajorElectives,
-                                       Map<String, List<Subject>> recommendedSubjectsMap,
-                                       List<String> prerequisites) {
-        for (String prerequisite : prerequisites) {
-            if (!enrolledMajorElectives.contains(prerequisite) &&
-                    !recommendedSubjectsMap.getOrDefault("추천 과목", new ArrayList<>()).contains(prerequisite)) {
-                addRecommendedSubject(prerequisite, recommendedSubjectsMap);
+    public Map<String, List<Subject>> recommendSubjects(String grade, String semester, List<String> enrolledMajorElectives) {
+        Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
+
+        // 1학년 1학기
+        if (grade.equals("1") && semester.equals("1")) {
+            addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+        }
+        // 1학년 2학기
+        else if (grade.equals("1") && semester.equals("2")) {
+            if(!enrolledMajorElectives.contains("C언어프로그래밍")){
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }if(!enrolledMajorElectives.contains("공학입문설계")){
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }
+
+            if (enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
             }
         }
-    }
+        // 2학년 1학기
+        else if (grade.equals("2") && semester.equals("1")) {
+            if(!enrolledMajorElectives.contains("C언어프로그래밍")){
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }if(!enrolledMajorElectives.contains("공학입문설계")){
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }if(!enrolledMajorElectives.contains("객체지향프로그래밍1")){
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
+            }
 
-    // 학년 및 학기에 따른 과목 추천 메서드
-    @Override
-    public void recommendSubjectsByGradeAndSemester(String grade, String semester, String subject,
-                                                    List<String> enrolledMajorElectives,
-                                                    Map<String, List<Subject>> recommendedSubjectsMap) {
-
-        if (isSubjectRecommendedForSemester(subject, grade, semester, enrolledMajorElectives)) {
-            addRecommendedSubject(subject, recommendedSubjectsMap);
+            if (enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("컴퓨터하드웨어", recommendedSubjectsMap);
+            }if (enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("자료구조", recommendedSubjectsMap);
+                addRecommendedSubject("객체지향프로그래밍2", recommendedSubjectsMap);
+            }
         }
-    }
+        // 2학년 2학기
+        else if (grade.equals("2") && semester.equals("2")) {
+            addRecommendedSubject("웹프로그래밍", recommendedSubjectsMap);
+            addRecommendedSubject("공개SW실무", recommendedSubjectsMap);
+            addRecommendedSubject("고급객체지향프로그래밍", recommendedSubjectsMap);
+            if (!enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("자료구조")) {
+                addRecommendedSubject("자료구조", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("컴퓨터하드웨어")) {
+                addRecommendedSubject("컴퓨터하드웨어", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("객체지향프로그래밍1")) {
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("객체지향프로그래밍2")) {
+                addRecommendedSubject("객체지향프로그래밍2", recommendedSubjectsMap);
+            }
 
-    // 학년 및 학기에 따른 추천 과목 조건 체크 메서드
-    private boolean isSubjectRecommendedForSemester(String subject, String grade, String semester, List<String> enrolledMajorElectives) {
-        switch (grade) {
-            case "1":
-                if (semester.equals("1")) {
-                    return subject.equals("C언어프로그래밍") || subject.equals("공학입문설계");
-                } else if (semester.equals("2")) {
-                    return subject.equals("객체지향프로그래밍1") && enrolledMajorElectives.contains("C언어프로그래밍");
-                }
-                break;
-            case "2":
-                if (semester.equals("1")) {
-                    return (subject.equals("자료구조") || subject.equals("객체지향프로그래밍2")) && enrolledMajorElectives.contains("C언어프로그래밍") ||
-                            (subject.equals("컴퓨터하드웨어") && enrolledMajorElectives.contains("공학입문설계"));
-                } else if (semester.equals("2")) {
-                    return subject.equals("팀프로젝트1") && enrolledMajorElectives.contains("공학입문설계") ||
-                            subject.equals("웹프로그래밍") ||
-                            subject.equals("공개SW실무") ||
-                            subject.equals("고급객체지향프로그래밍");
-                }
-                break;
-            case "3":
-                if (semester.equals("1")) {
-                    return subject.equals("데이터베이스") ||
-                            subject.equals("소프트웨어공학") ||
-                            subject.equals("운영체제") ||
-                            (subject.equals("컴퓨터네트워크") && enrolledMajorElectives.contains("컴퓨터하드웨어")) ||
-                            (subject.equals("컴퓨터아키텍처") && enrolledMajorElectives.contains("컴퓨터하드웨어")) ||
-                            subject.equals("시스템분석 및 설계") ||
-                            subject.equals("팀프로젝트2");
-                } else if (semester.equals("2")) {
-                    return (subject.equals("알고리즘") && enrolledMajorElectives.contains("자료구조")) ||
-                            (subject.equals("데이터베이스설계") && enrolledMajorElectives.contains("데이터베이스")) ||
-                            subject.equals("시스템프로그래밍") ||
-                            subject.equals("프로그래밍언어") ||
-                            subject.equals("임베디드시스템") ||
-                            subject.equals("컴퓨터 보안");
-                }
-                break;
-            case "4":
-                if (semester.equals("1")) {
-                    return (subject.equals("캡스톤 디자인") && !enrolledMajorElectives.contains("소프트웨어공학")) ||
-                            subject.equals("블록체인") ||
-                            subject.equals("컴퓨터그래픽스") ||
-                            subject.equals("시스템클라우드보안") ||
-                            subject.equals("기계학습");
-                } else if (semester.equals("2")) {
-                    return subject.equals("인공지능") ||
-                            subject.equals("모바일프로그래밍") ||
-                            subject.equals("백엔드소프트웨어개발") ||
-                            subject.equals("클라우드컴퓨팅") ||
-                            subject.equals("현장실습");
-                }
-                break;
+            if (enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("팀프로젝트1", recommendedSubjectsMap);
+            }
+
+
+
+
         }
-        return false;
-    }
 
+
+
+        // 3학년 1학기
+        else if (grade.equals("3") && semester.equals("1")) {
+            addRecommendedSubject("데이터베이스", recommendedSubjectsMap);
+            addRecommendedSubject("소프트웨어공학", recommendedSubjectsMap);
+            addRecommendedSubject("운영체제", recommendedSubjectsMap);
+            addRecommendedSubject("팀프로젝트2", recommendedSubjectsMap);
+            if (!enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("자료구조")) {
+                addRecommendedSubject("자료구조", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("컴퓨터하드웨어")) {
+                addRecommendedSubject("컴퓨터하드웨어", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("객체지향프로그래밍1")) {
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("객체지향프로그래밍2")) {
+                addRecommendedSubject("객체지향프로그래밍2", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공개SW실무")) {
+                addRecommendedSubject("공개SW실무", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("팀프로젝트1")) {
+                addRecommendedSubject("팀프로젝트1", recommendedSubjectsMap);
+            }
+
+
+            if (enrolledMajorElectives.contains("컴퓨터하드웨어")) {
+                addRecommendedSubject("컴퓨터네트워크", recommendedSubjectsMap);
+                addRecommendedSubject("컴퓨터아키텍처", recommendedSubjectsMap);
+                addRecommendedSubject("시스템분석 및 설계", recommendedSubjectsMap);
+
+            }
+
+        }
+        // 3학년 2학기
+        else if (grade.equals("3") && semester.equals("2")) {
+            addRecommendedSubject("시스템프로그래밍", recommendedSubjectsMap);
+            addRecommendedSubject("프로그래밍언어", recommendedSubjectsMap);
+            addRecommendedSubject("컴퓨터 보안", recommendedSubjectsMap);
+            if (!enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("자료구조")) {
+                addRecommendedSubject("자료구조", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("컴퓨터하드웨어")) {
+                addRecommendedSubject("컴퓨터하드웨어", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("객체지향프로그래밍1")) {
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("객체지향프로그래밍2")) {
+                addRecommendedSubject("객체지향프로그래밍2", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공개SW실무")) {
+                addRecommendedSubject("공개SW실무", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("팀프로젝트1")) {
+                addRecommendedSubject("팀프로젝트1", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("운영체제")) {
+                addRecommendedSubject("운영체제", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("소프트웨어공학")) {
+                addRecommendedSubject("소프트웨어공학", recommendedSubjectsMap);
+            }
+
+            if (enrolledMajorElectives.contains("자료구조")) {
+                addRecommendedSubject("알고리즘", recommendedSubjectsMap);
+            }
+            if (enrolledMajorElectives.contains("데이터베이스")) {
+                addRecommendedSubject("데이터베이스설계", recommendedSubjectsMap);
+            }
+            if (enrolledMajorElectives.contains("공개SW실무")&&enrolledMajorElectives.contains(("컴퓨터하드웨어"))) {
+                addRecommendedSubject("임베디드시스템", recommendedSubjectsMap);
+            }
+
+        }
+        // 4학년 1학기
+        else if (grade.equals("4") && semester.equals("1")) {
+
+            addRecommendedSubject("블록체인", recommendedSubjectsMap);
+            addRecommendedSubject("컴퓨터그래픽스", recommendedSubjectsMap);
+            addRecommendedSubject("시스템클라우드보안", recommendedSubjectsMap);
+            addRecommendedSubject("기계학습", recommendedSubjectsMap);
+            if (!enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("자료구조")) {
+                addRecommendedSubject("자료구조", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("컴퓨터하드웨어")) {
+                addRecommendedSubject("컴퓨터하드웨어", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("객체지향프로그래밍1")) {
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("객체지향프로그래밍2")) {
+                addRecommendedSubject("객체지향프로그래밍2", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공개SW실무")) {
+                addRecommendedSubject("공개SW실무", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("팀프로젝트1")) {
+                addRecommendedSubject("팀프로젝트1", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("운영체제")) {
+                addRecommendedSubject("운영체제", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("소프트웨어공학")) {
+                addRecommendedSubject("소프트웨어공학", recommendedSubjectsMap);
+            }  if (!enrolledMajorElectives.contains("알고리즘")) {
+                addRecommendedSubject("알고리즘", recommendedSubjectsMap);
+            }
+            if (enrolledMajorElectives.contains("소프트웨어공학")) {
+                addRecommendedSubject("캡스톤디자인", recommendedSubjectsMap);
+            }
+        }
+        // 4학년 2학기
+        else if (grade.equals("4") && semester.equals("2")) {
+            addRecommendedSubject("인공지능", recommendedSubjectsMap);
+            addRecommendedSubject("모바일프로그래밍", recommendedSubjectsMap);
+            addRecommendedSubject("백엔드소프트웨어개발", recommendedSubjectsMap);
+            addRecommendedSubject("클라우드컴퓨팅", recommendedSubjectsMap);
+            addRecommendedSubject("현장실습", recommendedSubjectsMap);
+
+            if (!enrolledMajorElectives.contains("C언어프로그래밍")) {
+                addRecommendedSubject("C언어프로그래밍", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공학입문설계")) {
+                addRecommendedSubject("공학입문설계", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("자료구조")) {
+                addRecommendedSubject("자료구조", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("컴퓨터하드웨어")) {
+                addRecommendedSubject("컴퓨터하드웨어", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("객체지향프로그래밍1")) {
+                addRecommendedSubject("객체지향프로그래밍1", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("객체지향프로그래밍2")) {
+                addRecommendedSubject("객체지향프로그래밍2", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("공개SW실무")) {
+                addRecommendedSubject("공개SW실무", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("팀프로젝트1")) {
+                addRecommendedSubject("팀프로젝트1", recommendedSubjectsMap);
+            }if (!enrolledMajorElectives.contains("운영체제")) {
+                addRecommendedSubject("운영체제", recommendedSubjectsMap);
+            }
+            if (!enrolledMajorElectives.contains("소프트웨어공학")) {
+                addRecommendedSubject("소프트웨어공학", recommendedSubjectsMap);
+            }  if (!enrolledMajorElectives.contains("알고리즘")) {
+                addRecommendedSubject("알고리즘", recommendedSubjectsMap);
+            }  if (!enrolledMajorElectives.contains("캡스톤디자인")) {
+                addRecommendedSubject("캡스톤디자인", recommendedSubjectsMap);
+            }
+        }
+
+        return recommendedSubjectsMap;
+    }
     // 추천 과목을 추가하는 메서드
     public void addRecommendedSubject(String subjectName, Map<String, List<Subject>> recommendedSubjectsMap) {
         List<Subject> subjectEntities = findByName(subjectName); // subjectMap에서 과목 리스트 찾기
@@ -366,7 +508,7 @@ public class MemorySubjectRepository implements SubjectRepository {
         // 추천 과목에 추가
         recommendedSubjectsMap.computeIfAbsent("추천 과목", k -> new ArrayList<>()).addAll(subjectEntities);
     }
-    
+
 
     public Map<String, List<Subject>> findRecommendedCoreSubjects(Member member) {
         // 수강 중인 과목 리스트
@@ -415,7 +557,7 @@ public class MemorySubjectRepository implements SubjectRepository {
                 List.of("글쓰기", "발표와토의"),
                 List.of("영어1", "영어2", "영어3", "영어4"),
                 List.of("영어회화1", "영어회화2", "영어회화3", "영어회화4"),
-                List.of("4차산업혁명과미래사회진로선택", "디지털리터리시의이해")
+                List.of("4차산업혁명과미래사회진로선택", "디지털리터러시의이해")
         );
 
         // 1. 첫 번째 그룹 처리

@@ -662,30 +662,16 @@ public class MemberController {
         String grade = member.getGrade(); // 학년
         String semester = member.getSemester(); // 학기
 
-        System.out.println(member.getMajors());
         List<String> enrolledMajorElectives = member.getMajors(); // 이수 전공 과목 조회
         Map<String, List<Subject>> recommendedSubjectsMap = new HashMap<>();
 
-        // 과목과 선이수 과목 정의
-        Map<String, List<String>> coursePrerequisites = subjectRepository.getCoursePrerequisites();
-
-        // 추천 과목 로직
-        for (Map.Entry<String, List<String>> entry : coursePrerequisites.entrySet()) {
-            String subject = entry.getKey();
-            List<String> prerequisites = entry.getValue();
-
-            // 선이수 과목 추천 로직
-            subjectRepository.recommendPrerequisites(enrolledMajorElectives, recommendedSubjectsMap, prerequisites);
-            // 학년 및 학기에 따른 추천 과목 추가
-            subjectRepository.recommendSubjectsByGradeAndSemester(grade, semester, subject, enrolledMajorElectives, recommendedSubjectsMap);
-        }
-        System.out.println(recommendedSubjectsMap);
+        // 과목 추천 로직 통합
+        recommendedSubjectsMap = subjectRepository.recommendSubjects(grade, semester, enrolledMajorElectives);
 
         // 추천 과목이 없으면 빈 리스트로 반환
         if (recommendedSubjectsMap.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(Collections.emptyMap());
         }
-
 
         // 추천 과목 반환
         return ResponseEntity.ok(recommendedSubjectsMap);
@@ -735,3 +721,6 @@ public class MemberController {
         return ResponseEntity.ok(recommendedSubjects);
     }
 }
+
+ /*  // 선이수 과목 추천 로직
+            subjectRepository.recommendPrerequisites(enrolledMajorElectives, recommendedSubjectsMap, prerequisites);*/
